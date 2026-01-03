@@ -1,0 +1,14 @@
+{
+    "rolls": {
+        "name": "Rolls"
+    },
+    "hot_dishes": {
+        "name": "Hot Dishes"
+    },
+    "business_lunch": {
+        "name": "Business Lunches"
+    },
+    "sets": {
+        "name": "Sets"
+    }
+}

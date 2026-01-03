@@ -1,0 +1,21 @@
+{
+    "order_001_sushi": {
+        "cartId": "checked_out_cart_sushi",
+        "status": "success",
+        "paymentMethod": "card",
+        "isPaid": true,
+        "cardLast4": "4242",
+        "items": [
+            {
+                "productId": "party_set_s",
+                "name": "Small Party Set",
+                "quantity": 1,
+                "price": 3500
+            }
+        ],
+        "subtotal": 3500,
+        "discount": 0,
+        "total": 3500,
+        "createdAt": "2026-01-03T06:15:00.000Z"
+    }
+}

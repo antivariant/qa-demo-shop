@@ -1,10 +1,19 @@
 import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 
-dotenv.config();
+// Load environment variables. Supports ENV_FILE=xxx.env
+const envFile = process.env.ENV_FILE || '.env';
+if (fs.existsSync(envFile)) {
+    dotenv.config({ path: envFile });
+} else if (fs.existsSync('.env.dev')) {
+    dotenv.config({ path: '.env.dev' });
+} else {
+    dotenv.config();
+}
 
 export function initFirebase() {
-    const projectId = process.env.FIREBASE_PROJECT_ID || 'demo-qa-shop';
+    const projectId = process.env.FIREBASE_PROJECT_ID || (process.env.FIRESTORE_EMULATOR_HOST ? 'demo-qa-shop' : undefined);
     const firestoreHost = process.env.FIRESTORE_EMULATOR_HOST;
     const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
 

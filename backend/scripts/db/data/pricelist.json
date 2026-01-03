@@ -1,0 +1,86 @@
+{
+    "philadelphia_roll": {
+        "productId": "philadelphia_roll",
+        "price": 1200,
+        "currency": "USD",
+        "isActive": true
+    },
+    "california_roll": {
+        "productId": "california_roll",
+        "price": 1100,
+        "currency": "USD",
+        "isActive": true
+    },
+    "dragon_roll": {
+        "productId": "dragon_roll",
+        "price": 1400,
+        "currency": "USD",
+        "isActive": true
+    },
+    "spicy_tuna_roll": {
+        "productId": "spicy_tuna_roll",
+        "price": 950,
+        "currency": "USD",
+        "isActive": true
+    },
+    "tempura_shrimp_roll": {
+        "productId": "tempura_shrimp_roll",
+        "price": 1050,
+        "currency": "USD",
+        "isActive": true
+    },
+    "miso_soup": {
+        "productId": "miso_soup",
+        "price": 900,
+        "currency": "USD",
+        "isActive": true
+    },
+    "teriyaki_chicken": {
+        "productId": "teriyaki_chicken",
+        "price": 1350,
+        "currency": "USD",
+        "isActive": true
+    },
+    "beef_udon": {
+        "productId": "beef_udon",
+        "price": 1550,
+        "currency": "USD",
+        "isActive": true
+    },
+    "lunch_basic": {
+        "productId": "lunch_basic",
+        "price": 1400,
+        "currency": "USD",
+        "isActive": true
+    },
+    "lunch_premium": {
+        "productId": "lunch_premium",
+        "price": 2200,
+        "currency": "USD",
+        "isActive": true
+    },
+    "party_set_s": {
+        "productId": "party_set_s",
+        "price": 3500,
+        "currency": "USD",
+        "isActive": true
+    },
+    "party_set_m": {
+        "productId": "party_set_m",
+        "price": 5200,
+        "currency": "USD",
+        "isActive": true
+    },
+    "party_set_l": {
+        "productId": "party_set_l",
+        "price": 5900,
+        "currency": "USD",
+        "isActive": true
+    },
+    "veggie_set": {
+        "productId": "veggie_set",
+        "price": 3800,
+        "currency": "USD",
+        "isActive": true
+    }
+}

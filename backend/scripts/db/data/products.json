@@ -1,0 +1,86 @@
+{
+    "philadelphia_roll": {
+        "name": "Philadelphia Classic",
+        "description": "Premium salmon, cream cheese, cucumber, and avocado.",
+        "imageUrl": "https://via.placeholder.com/300?text=Philadelphia",
+        "categoryId": "rolls"
+    },
+    "california_roll": {
+        "name": "California Gold",
+        "description": "Snow crab, avocado, cucumber, and tobiko.",
+        "imageUrl": "https://via.placeholder.com/300?text=California",
+        "categoryId": "rolls"
+    },
+    "dragon_roll": {
+        "name": "Green Dragon",
+        "description": "Eel, cucumber, topped with avocado and unagi sauce.",
+        "imageUrl": "https://via.placeholder.com/300?text=Dragon+Roll",
+        "categoryId": "rolls"
+    },
+    "spicy_tuna_roll": {
+        "name": "Spicy Tuna",
+        "description": "Fresh tuna with spicy mayo and green onion.",
+        "imageUrl": "https://via.placeholder.com/300?text=Spicy+Tuna",
+        "categoryId": "rolls"
+    },
+    "tempura_shrimp_roll": {
+        "name": "Tempura Shrimp",
+        "description": "Crispy shrimp tempura, cucumber, and spicy mayo.",
+        "imageUrl": "https://via.placeholder.com/300?text=Tempura+Shrimp",
+        "categoryId": "rolls"
+    },
+    "miso_soup": {
+        "name": "Miso Soup",
+        "description": "Traditional soup with tofu, wakame, and green onions.",
+        "imageUrl": "https://via.placeholder.com/300?text=Miso+Soup",
+        "categoryId": "hot_dishes"
+    },
+    "teriyaki_chicken": {
+        "name": "Chicken Teriyaki",
+        "description": "Grilled chicken with teriyaki sauce and steamed rice.",
+        "imageUrl": "https://via.placeholder.com/300?text=Chicken+Teriyaki",
+        "categoryId": "hot_dishes"
+    },
+    "beef_udon": {
+        "name": "Beef Udon",
+        "description": "Thick wheat noodles with tender beef and vegetables.",
+        "imageUrl": "https://via.placeholder.com/300?text=Beef+Udon",
+        "categoryId": "hot_dishes"
+    },
+    "lunch_basic": {
+        "name": "Basic Business Lunch",
+        "description": "Miso soup, California roll, and green tea.",
+        "imageUrl": "https://via.placeholder.com/300?text=Business+Lunch+1",
+        "categoryId": "business_lunch"
+    },
+    "lunch_premium": {
+        "name": "Premium Business Lunch",
+        "description": "Miso soup, Philadelphia roll, 3 nigiri, and green tea.",
+        "imageUrl": "https://via.placeholder.com/300?text=Business+Lunch+2",
+        "categoryId": "business_lunch"
+    },
+    "party_set_s": {
+        "name": "Small Party Set",
+        "description": "24 pieces: Philadelphia, California, and Spicy Tuna.",
+        "imageUrl": "https://via.placeholder.com/300?text=Small+Set",
+        "categoryId": "sets"
+    },
+    "party_set_m": {
+        "name": "Medium Party Set",
+        "description": "40 pieces: Philadelphia, California, Dragon, and Tempura Shrimp.",
+        "imageUrl": "https://via.placeholder.com/300?text=Medium+Set",
+        "categoryId": "sets"
+    },
+    "party_set_l": {
+        "name": "Family Party Set",
+        "description": "64 pieces: Best-selling rolls and variety of nigiri.",
+        "imageUrl": "https://via.placeholder.com/300?text=Large+Set",
+        "categoryId": "sets"
+    },
+    "veggie_set": {
+        "name": "Veggie Delight Set",
+        "description": "32 pieces: Avocado, cucumber, and vegetable tempura rolls.",
+        "imageUrl": "https://via.placeholder.com/300?text=Veggie+Set",
+        "categoryId": "sets"
+    }
+}

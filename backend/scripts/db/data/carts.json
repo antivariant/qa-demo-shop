@@ -1,0 +1,44 @@
+{
+    "active_cart_sushi": {
+        "status": "active",
+        "items": [
+            {
+                "productId": "philadelphia_roll",
+                "name": "Philadelphia Classic",
+                "quantity": 1,
+                "price": 1200,
+                "itemTotal": 1200
+            },
+            {
+                "productId": "miso_soup",
+                "name": "Miso Soup",
+                "quantity": 1,
+                "price": 900,
+                "itemTotal": 900
+            }
+        ],
+        "subtotal": 2100,
+        "discount": 0,
+        "total": 2100,
+        "createdAt": "2026-01-03T07:00:00.000Z",
+        "updatedAt": "2026-01-03T07:05:00.000Z"
+    },
+    "checked_out_cart_sushi": {
+        "status": "checked_out",
+        "linkedOrderId": "order_001_sushi",
+        "items": [
+            {
+                "productId": "party_set_s",
+                "name": "Small Party Set",
+                "quantity": 1,
+                "price": 3500,
+                "itemTotal": 3500
+            }
+        ],
+        "subtotal": 3500,
+        "discount": 0,
+        "total": 3500,
+        "createdAt": "2026-01-03T06:00:00.000Z",
+        "updatedAt": "2026-01-03T06:15:00.000Z"
+    }
+}
