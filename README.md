@@ -1,9 +1,3 @@
-Отлично, давай сделаем **короткое, взрослое и читабельное описание**, без маркетинга и без лишних деталей — именно то, что ожидают увидеть в хорошем техническом репозитории.
-
-Ниже — **готовый текст для `README.md` (Backend section)**. Его можно вставлять почти без правок.
-
----
-
 ## Backend Overview
 
 This repository contains the backend implementation for a **demo e-commerce platform**, designed primarily for **QA / SDET training, testing demonstrations, and architectural experiments**.
