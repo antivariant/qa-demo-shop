@@ -1,0 +1,66 @@
+"use client";
+
+import { motion, AnimatePresence } from 'framer-motion';
+import styles from './ProductModal.module.css';
+import { X, Plus } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { Product } from './ProductCard';
+
+interface ProductModalProps {
+    product: Product | null;
+    onClose: () => void;
+}
+
+export default function ProductModal({ product, onClose }: ProductModalProps) {
+    const { addToCart } = useCart();
+
+    if (!product) return null;
+
+    const handleAdd = () => {
+        addToCart(product, 1);
+        onClose();
+    };
+
+    const formattedPrice = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: product.currency,
+    }).format(product.price / 100);
+
+    return (
+        <AnimatePresence>
+            {product && (
+                <div className={styles.overlay} onClick={onClose}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className={styles.modal}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button className={styles.closeBtn} onClick={onClose}>
+                            <X size={24} />
+                        </button>
+
+                        <div className={styles.grid}>
+                            <div className={styles.imageSection}>
+                                <img src={product.imageUrl} alt={product.name} className={styles.image} />
+                            </div>
+
+                            <div className={styles.infoSection}>
+                                <h2 className={styles.name}>{product.name}</h2>
+                                <p className={styles.description}>{product.description}</p>
+
+                                <div className={styles.footer}>
+                                    <span className={styles.price}>{formattedPrice}</span>
+                                    <button className={styles.addBtn} onClick={handleAdd}>
+                                        <Plus size={24} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+    );
+}

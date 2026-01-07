@@ -20,20 +20,44 @@ Check server status.
   ```
 
 ### [GET] `/products`
-List all products.
-- **Request**: None
+List all products. Includes mandatory price data.
+- **Request**: 
+  - `category` (optional): Filter products by category ID.
 - **Response (200)**:
   ```json
   [
     {
       "id": "prod_001",
-      "name": "QA Testing Handbook",
-      "description": "Comprehensive guide...",
-      "imageUrl": "https://example.com/handbook.jpg",
-      "categoryId": "books"
+      "name": "California Roll",
+      "description": "Crab, avocado, cucumber",
+      "imageUrl": "https://example.com/cali.jpg",
+      "categoryId": "rolls",
+      "price": 1299,
+      "currency": "USD"
     }
   ]
   ```
+
+### [GET] `/categories`
+List all categories.
+- **Request**: None
+- **Response (200)**:
+  ```json
+  [
+    {
+      "id": "rolls",
+      "name": "Rolls"
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks"
+    }
+  ]
+  ```
+
+### [GET] `/products/:id`
+Get single product with price.
+- **Response (200)**: Product object or **404** if not found/no price.
 
 ---
 
@@ -44,7 +68,21 @@ Get the current active cart.
 - **Response (200)**: Updated Cart object.
 
 ### [POST] `/cart/items`
-Add item. Payload: `{"productId": "...", "quantity": 1}`.
+Add or update item.
+- **Payload**: `{"productId": "...", "quantity": 1}`
+- **Behavior**: 
+  - If item exists in cart → adds quantity to existing.
+  - If quantity results in 0 → removes item.
+- **Response (200)**: Updated Cart object.
+
+### [PATCH] `/cart/items/:itemId`
+Set item quantity.
+- **Payload**: `{"quantity": 5}`
+- **Response (200)**: Updated Cart object.
+
+### [DELETE] `/cart/items/:itemId`
+Explicitly remove item from cart.
+- **Response (200)**: Updated Cart object.
 
 ---
 

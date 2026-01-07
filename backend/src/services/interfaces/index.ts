@@ -1,19 +1,21 @@
-import { Product, Cart, Order, Money, PaymentMethod } from '../../domain/types';
+import { Product, Cart, Order, Money, PaymentMethod, Category } from '../../domain/types';
 
 export interface IPricelistService {
     getActivePrice(productId: string): Promise<Money | null>;
 }
 
 export interface ICatalogService {
-    getProducts(): Promise<Product[]>;
+    getProducts(categoryId?: string): Promise<Product[]>;
     getProductById(id: string): Promise<Product | null>;
+    getCategories(): Promise<Category[]>;
 }
 
 export interface ICartService {
     getCart(userId: string): Promise<Cart & { id: string }>;
+    // Updates quantity if item exists, adds if not, removes if quantity <= 0
     addItem(userId: string, productId: string, quantity: number): Promise<Cart & { id: string }>;
-    updateItemQuantity(userId: string, productId: string, quantity: number): Promise<Cart & { id: string }>;
-    removeItem(userId: string, productId: string): Promise<Cart & { id: string }>;
+    updateItemQuantity(userId: string, itemId: string, quantity: number): Promise<Cart & { id: string }>;
+    removeItem(userId: string, itemId: string): Promise<Cart & { id: string }>;
     clearCart(userId: string): Promise<void>;
     createCart(userId: string): Promise<string>; // Returns new cart ID
 }

@@ -1,10 +1,18 @@
 export type Money = number; // in cents
 
 export interface Product {
+    id: string;
     name: string;
     description: string;
     imageUrl: string;
     categoryId: string;
+    price: Money;
+    currency: string;
+}
+
+export interface Category {
+    id: string;
+    name: string;
 }
 
 export interface PriceItem {

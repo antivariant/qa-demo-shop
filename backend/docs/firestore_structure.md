@@ -17,6 +17,9 @@ Stores product metadata.
   }
   ```
 
+> [!NOTE]
+> While `price` and `currency` are stored in the `pricelist` collection for auditability, the **Catalog API** aggregates these fields into the response for frontend convenience.
+
 ### 2. Collection: `categories`
 (Optional for now, but referenced)
 - **Doc ID**: Descriptive ID (e.g., `books`, `electronics`).

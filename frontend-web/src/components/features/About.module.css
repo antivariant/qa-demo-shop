@@ -1,0 +1,94 @@
+.about {
+    min-height: 100vh;
+    padding-top: 120px;
+    background: var(--bg-primary);
+    position: relative;
+    overflow-x: hidden;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.section {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+}
+
+.section p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.section ul {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.section li {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.section li::before {
+    content: '-';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--glass-border);
+    margin: 2rem 0;
+}
+
+.footer {
+    border-top: 1px solid var(--glass-border);
+    padding: 3rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.socials {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.socials a {
+    color: var(--text-primary);
+    transition: var(--transition-smooth);
+    opacity: 0.7;
+}
+
+.socials a:hover {
+    color: var(--accent);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+}

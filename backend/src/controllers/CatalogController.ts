@@ -6,7 +6,8 @@ export class CatalogController {
 
     async getProducts(req: Request, res: Response) {
         try {
-            const products = await this.catalogService.getProducts();
+            const categoryId = req.query.category as string | undefined;
+            const products = await this.catalogService.getProducts(categoryId);
             res.json(products);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -23,6 +24,16 @@ export class CatalogController {
             res.json(product);
         } catch (error) {
             console.error(`Error fetching product ${req.params.id}:`, error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async getCategories(req: Request, res: Response) {
+        try {
+            const categories = await this.catalogService.getCategories();
+            res.json(categories);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     }

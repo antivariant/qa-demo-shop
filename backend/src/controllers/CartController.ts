@@ -17,7 +17,7 @@ export class CartController {
 
     async addItem(req: AuthRequest, res: Response) {
         const { productId, quantity } = req.body;
-        if (!productId || typeof quantity !== 'number' || quantity <= 0) {
+        if (!productId || typeof quantity !== 'number') {
             return res.status(400).json({ error: 'Invalid product or quantity', errorCode: 'invalid_parameter' });
         }
 
@@ -31,14 +31,14 @@ export class CartController {
     }
 
     async updateItem(req: AuthRequest, res: Response) {
-        const { productId } = req.params;
+        const { itemId } = req.params;
         const { quantity } = req.body;
         if (typeof quantity !== 'number') {
             return res.status(400).json({ error: 'Invalid quantity', errorCode: 'invalid_parameter' });
         }
 
         try {
-            const cart = await this.cartService.updateItemQuantity(req.user!.uid, productId!, quantity);
+            const cart = await this.cartService.updateItemQuantity(req.user!.uid, itemId!, quantity);
             res.json(cart);
         } catch (error: any) {
             console.error('Error updating cart item:', error);
@@ -48,7 +48,7 @@ export class CartController {
 
     async removeItem(req: AuthRequest, res: Response) {
         try {
-            const cart = await this.cartService.removeItem(req.user!.uid, req.params.productId!);
+            const cart = await this.cartService.removeItem(req.user!.uid, req.params.itemId!);
             res.json(cart);
         } catch (error: any) {
             console.error('Error removing cart item:', error);

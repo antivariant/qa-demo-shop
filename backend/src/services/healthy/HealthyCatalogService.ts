@@ -1,21 +1,71 @@
 import * as admin from 'firebase-admin';
-import { ICatalogService } from '../interfaces';
-import { Product } from '../../domain/types';
+import { ICatalogService, IPricelistService } from '../interfaces';
+import { Product, Category } from '../../domain/types';
 
 export class HealthyCatalogService implements ICatalogService {
+    constructor(private pricelistService: IPricelistService) { }
+
     private get db() {
         return admin.firestore();
     }
     private productsCollection = 'products';
+    private categoriesCollection = 'categories';
 
-    async getProducts(): Promise<Product[]> {
-        const snapshot = await this.db.collection(this.productsCollection).get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+    async getProducts(categoryId?: string): Promise<Product[]> {
+        let query: admin.firestore.Query = this.db.collection(this.productsCollection);
+
+        if (categoryId) {
+            query = query.where('categoryId', '==', categoryId);
+        }
+
+        const snapshot = await query.get();
+        const products: Product[] = [];
+
+        for (const doc of snapshot.docs) {
+            const productData = doc.data();
+            const price = await this.pricelistService.getActivePrice(doc.id);
+
+            if (price !== null) {
+                products.push({
+                    id: doc.id,
+                    name: productData.name,
+                    description: productData.description,
+                    imageUrl: productData.imageUrl,
+                    categoryId: productData.categoryId,
+                    price: price,
+                    currency: 'USD' // Default for demo
+                } as Product);
+            }
+        }
+
+        return products;
     }
 
     async getProductById(id: string): Promise<Product | null> {
         const doc = await this.db.collection(this.productsCollection).doc(id).get();
         if (!doc.exists) return null;
-        return { id: doc.id, ...doc.data() } as any;
+
+        const productData = doc.data()!;
+        const price = await this.pricelistService.getActivePrice(id);
+
+        if (price === null) return null; // Fail fast if no price
+
+        return {
+            id: doc.id,
+            name: productData.name,
+            description: productData.description,
+            imageUrl: productData.imageUrl,
+            categoryId: productData.categoryId,
+            price: price,
+            currency: 'USD'
+        } as Product;
+    }
+
+    async getCategories(): Promise<Category[]> {
+        const snapshot = await this.db.collection(this.categoriesCollection).get();
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            name: doc.data().name
+        } as Category));
     }
 }

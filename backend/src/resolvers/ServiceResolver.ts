@@ -18,7 +18,7 @@ export class ServiceResolver {
 
     static getCatalogService(): ICatalogService {
         if (!this.catalogService) {
-            this.catalogService = new HealthyCatalogService();
+            this.catalogService = new HealthyCatalogService(this.getPricelistService());
         }
         return this.catalogService;
     }
