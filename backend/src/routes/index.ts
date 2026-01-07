@@ -20,12 +20,13 @@ router.get('/health', (req, res) => {
 // Catalog
 router.get('/products', (req, res) => catalogController.getProducts(req, res));
 router.get('/products/:id', (req, res) => catalogController.getProductById(req, res));
+router.get('/categories', (req, res) => catalogController.getCategories(req, res));
 
 // Cart (Auth required)
 router.get('/cart', authMiddleware, (req, res) => cartController.getCart(req as any, res));
 router.post('/cart/items', authMiddleware, (req, res) => cartController.addItem(req as any, res));
-router.patch('/cart/items/:productId', authMiddleware, (req, res) => cartController.updateItem(req as any, res));
-router.delete('/cart/items/:productId', authMiddleware, (req, res) => cartController.removeItem(req as any, res));
+router.patch('/cart/items/:itemId', authMiddleware, (req, res) => cartController.updateItem(req as any, res));
+router.delete('/cart/items/:itemId', authMiddleware, (req, res) => cartController.removeItem(req as any, res));
 router.delete('/cart', authMiddleware, (req, res) => cartController.clearCart(req as any, res));
 
 // Checkout & Orders (Auth required)

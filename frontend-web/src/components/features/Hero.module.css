@@ -1,0 +1,184 @@
+.hero {
+    height: calc(100vh - 80px);
+    height: calc(100svh - 80px);
+    width: 100vw;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+.content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    /* 8x8 Grid with strict row heights */
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+    gap: var(--grid-gutter);
+    padding: var(--grid-margin);
+}
+
+/* Logo Unit: Occupies columns 1-4. Reduced row span to 1-8 (leaving last row empty) to optically lift the center. */
+.logoUnit {
+    grid-column: 1 / 5;
+    grid-row: 1 / 8;
+    /* Ends at line 8, leaving the bottom row empty. Lifts visual center. */
+    align-self: center;
+    /* Vertically centered */
+    justify-self: end;
+    /* Push strict against the right edge of the grid area */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* Inner text aligns to the left of the bounding box */
+
+    z-index: 20;
+    pointer-events: auto;
+    width: fit-content;
+    /* Shrink to wrap content so we can align the box precisely */
+}
+
+.platformDesc {
+    font-size: clamp(0.7rem, 2vh, 1.1rem);
+    color: #fff;
+    margin-bottom: 2vh;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    opacity: 0.6;
+}
+
+.brandName {
+    font-size: 25vh;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    line-height: 0.75;
+    color: #fff;
+    margin-bottom: 3vh;
+    margin-left: -0.05em;
+}
+
+.phrases {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.phrase {
+    font-size: 5vh;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+/* Staggered offsets for phrases */
+.phrase:nth-child(2) {
+    margin-left: 1em;
+    /* Reduced from 1.5em */
+}
+
+.phrase:nth-child(3) {
+    margin-left: 2em;
+    /* Reduced from 3em */
+}
+
+/* Image Container: Starts at Col 4 (Line 4), Goes to end. Left aligned. */
+.imageContainer {
+    grid-column: 4 / -1;
+    /* Starts at line 4 (Left edge of Col 4) */
+    grid-row: 1 / -1;
+    /* Full height */
+
+    display: flex;
+    align-items: flex-end;
+    /* Anchor to bottom */
+    justify-content: flex-start;
+    /* Anchor image to the left edge of this area (Line 4) */
+
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+    pointer-events: none;
+    overflow: visible;
+    /* Allow "where it falls" behavior */
+    padding-bottom: var(--grid-margin);
+    /* Ensure feet respect margin */
+}
+
+.mascot {
+    width: auto;
+    height: 100%;
+    /* Full vertical height */
+    max-width: none;
+    /* Allow unconstrained width expansion */
+    object-fit: cover;
+    /* Fill the height, crop width if needed (or grow) */
+    object-position: bottom left;
+    /* Anchor Left-Bottom */
+    filter: drop-shadow(0 0 50px rgba(255, 69, 0, 0.15));
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 0%, #000 100%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+}
+
+/* Mobile Layout */
+@media (max-width: 1024px) {
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 5vw;
+        text-align: center;
+    }
+
+    .logoUnit {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+        margin-bottom: 2rem;
+        align-items: center;
+        justify-self: center;
+    }
+
+    .brandName {
+        font-size: 15vw;
+    }
+
+    /* Reset stagger on mobile */
+    .phrase:nth-child(n) {
+        margin-left: 0;
+    }
+
+    .imageContainer {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+        height: 40vh;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mascot {
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        object-position: bottom center;
+    }
+}

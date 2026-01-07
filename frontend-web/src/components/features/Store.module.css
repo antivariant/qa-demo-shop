@@ -1,0 +1,105 @@
+.store {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    overflow: hidden;
+    background: var(--bg-primary);
+    padding-top: 80px;
+    /* Header height */
+}
+
+.left,
+.right {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.left {
+    border: 1px solid var(--accent-cyan);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    margin-right: 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+}
+
+.right {
+    position: relative;
+    overflow: hidden;
+    /* We handle scrolling via JS/Framer */
+}
+
+.title {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 2.5rem;
+    display: block;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    align-content: start;
+}
+
+/* Featured cards may have different responsive behavior if needed */
+.featuredGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--grid-gutter);
+    align-content: start;
+}
+
+.listScrollContainer {
+    flex: 1;
+    overflow-y: scroll;
+    height: 100%;
+    scrollbar-width: none;
+    /* Hide scrollbar for technical look */
+}
+
+.listScrollContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.listGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--grid-gutter);
+    align-content: start;
+    padding-bottom: 20vh;
+    /* Allow last items to be partially hidden/revealed */
+}
+
+@media (max-width: 1024px) {
+    .store {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .left {
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .right {
+        overflow: visible;
+    }
+
+    .listScrollContainer {
+        overflow-y: visible;
+        height: auto;
+    }
+}

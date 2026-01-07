@@ -81,7 +81,7 @@ export class HealthyCartService implements ICartService {
         if (existingItem) {
             existingItem.quantity += quantity;
             existingItem.itemTotal = existingItem.quantity * existingItem.price;
-        } else {
+        } else if (quantity > 0) {
             const product = await this.catalogService.getProductById(productId);
             if (!product) throw new Error('Product not found');
 
@@ -98,19 +98,23 @@ export class HealthyCartService implements ICartService {
             cart.items.push(newItem);
         }
 
+        // Behavior: If quantity = 0 -> remove item
+        cart.items = cart.items.filter(item => item.quantity > 0);
+
         return this.recalculateAndSave(cartWithId.id, cart);
     }
 
-    async updateItemQuantity(userId: string, productId: string, quantity: number): Promise<Cart & { id: string }> {
+    async updateItemQuantity(userId: string, itemId: string, quantity: number): Promise<Cart & { id: string }> {
         const cartWithId = await this.getCart(userId);
         const cart = { ...cartWithId };
         delete (cart as any).id;
 
-        const item = cart.items.find(item => item.productId === productId);
+        // Note: itemId maps to productId in this implementation
+        const item = cart.items.find(item => item.productId === itemId);
 
         if (item) {
             if (quantity <= 0) {
-                cart.items = cart.items.filter(i => i.productId !== productId);
+                cart.items = cart.items.filter(i => i.productId !== itemId);
             } else {
                 item.quantity = quantity;
                 item.itemTotal = item.quantity * item.price;
@@ -120,12 +124,13 @@ export class HealthyCartService implements ICartService {
         return this.recalculateAndSave(cartWithId.id, cart);
     }
 
-    async removeItem(userId: string, productId: string): Promise<Cart & { id: string }> {
+    async removeItem(userId: string, itemId: string): Promise<Cart & { id: string }> {
         const cartWithId = await this.getCart(userId);
         const cart = { ...cartWithId };
         delete (cart as any).id;
 
-        cart.items = cart.items.filter(item => item.productId !== productId);
+        // Note: itemId maps to productId in this implementation
+        cart.items = cart.items.filter(item => item.productId !== itemId);
         return this.recalculateAndSave(cartWithId.id, cart);
     }
 
