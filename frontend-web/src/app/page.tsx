@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-testid="main-container">
       <Hero />
       <Store />
       <About />

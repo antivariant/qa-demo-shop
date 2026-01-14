@@ -3,6 +3,7 @@ import { CatalogController } from '../controllers/CatalogController';
 import { CartController } from '../controllers/CartController';
 import { CheckoutController } from '../controllers/CheckoutController';
 import { OrderController } from '../controllers/OrderController';
+import { ImageController } from '../controllers/ImageController';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
@@ -11,6 +12,7 @@ const catalogController = new CatalogController();
 const cartController = new CartController();
 const checkoutController = new CheckoutController();
 const orderController = new OrderController();
+const imageController = new ImageController();
 
 // Health check
 router.get('/health', (req, res) => {
@@ -32,5 +34,8 @@ router.delete('/cart', authMiddleware, (req, res) => cartController.clearCart(re
 // Checkout & Orders (Auth required)
 router.post('/checkout', authMiddleware, (req, res) => checkoutController.checkout(req as any, res));
 router.get('/orders', authMiddleware, (req, res) => orderController.getOrders(req as any, res));
+
+// Images
+router.get('/images/products/:filename', (req, res) => imageController.getImage(req, res));
 
 export default router;

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAppDispatch } from '@/store/hooks';
+import { loginUser } from '@/store/features/auth/authSlice';
 import styles from './Login.module.css';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -10,7 +11,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const dispatch = useAppDispatch();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -19,7 +20,7 @@ export default function LoginPage() {
         setError('');
 
         try {
-            await login(email);
+            await dispatch(loginUser(email)).unwrap(); // Ensure thunk errors are caught
             router.push('/');
         } catch (err: any) {
             setError(err.message || 'Failed to login');

@@ -9,12 +9,13 @@
   --text-secondary: #a0a0a0;
   --text-muted: #666666;
 
-  --accent: #ff4500;
-  /* Vibrant Orange for phrases and highlights */
+  --accent: #FF4D00;
+  /* Warm Orange as per mascot outline */
   --accent-hover: #e03d00;
-  --accent-cyan: #00ffff;
-  /* Cyan for featured section borders */
-  --accent-soft: rgba(255, 69, 0, 0.1);
+  --accent-blue: #00D2FF;
+  /* Cold Blue from mascot sleeves */
+  --accent-cyan: #00D2FF;
+  --accent-soft: rgba(255, 77, 0, 0.1);
 
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);

@@ -1,8 +1,10 @@
 .card {
     position: relative;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 1.5rem;
+    /* Transparent as requested */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    /* Compact radius to save space */
     transition: var(--transition-smooth);
     overflow: hidden;
     cursor: pointer;
@@ -12,23 +14,32 @@
 
 .card:hover {
     border-color: #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+    /* Inner glow */
 }
 
+/* Variant overrides */
 .variant_featured {
     width: 100%;
+    height: 100%;
+    /* Fill the grid cell */
+    aspect-ratio: unset;
+    /* Let container dictate shape */
 }
 
 .variant_list {
     width: 100%;
+    aspect-ratio: 0.8;
 }
 
 .imageWrapper {
-    aspect-ratio: 1/1;
+    flex: 1;
+    /* Take up available space */
     width: 100%;
     position: relative;
     overflow: hidden;
-    padding: 1.5rem;
+    padding: 0.5rem;
+    /* Reduced from 1.5rem */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,93 +50,131 @@
     height: 100%;
     object-fit: contain;
     transition: transform 0.5s ease;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+    /* Pop from background */
 }
 
 .card:hover .image {
-    transform: scale(1.05);
+    transform: scale(1.1) translateY(-5%);
 }
 
 .info {
-    padding: 1.5rem;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
 }
 
 .textData {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
 }
 
 .name {
-    font-size: 1.1rem;
-    font-weight: 400;
-    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .price {
-    font-size: 1.25rem;
-    color: #fff;
-    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--accent-orange, #FF4D00);
+    font-weight: 700;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
 }
 
 .addBtn {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: var(--text-primary);
+    border: 1px solid #fff;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition-smooth);
-    position: relative;
+    opacity: 0;
+    /* Hidden by default */
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .addBtn {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .addBtn:hover {
-    border-color: #fff;
-    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-orange, #FF4D00);
+    color: var(--accent-orange, #FF4D00);
+    box-shadow: 0 0 15px rgba(255, 77, 0, 0.3);
 }
 
-.crosshair {
-    width: 30px;
-    height: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
+.quantityContainer {
+    display: flex;
+    align-items: center;
+    gap: 0;
     position: relative;
 }
 
-.crosshair::before,
-.crosshair::after {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.6);
+.quantityBadge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 2;
+    cursor: default;
 }
 
-.crosshair::before {
-    width: 100%;
-    height: 1px;
-    top: 50%;
-    left: 0;
+.controlBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-orange, #FF4D00);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: transform 0.2s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
-.crosshair::after {
-    width: 1px;
-    height: 100%;
-    left: 50%;
-    top: 0;
+.minusBtn {
+    margin-right: -10px;
+}
+
+.plusBtn {
+    margin-left: -10px;
 }
 
 @media (max-width: 480px) {
 
     .variant_featured,
     .variant_list {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 2/3;
+        aspect-ratio: auto;
     }
 }

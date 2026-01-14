@@ -1,4 +1,4 @@
-import { ICatalogService, ICartService, IDiscountService, IPaymentService, ICheckoutService, IOrderService, IPricelistService } from '../services/interfaces';
+import { ICatalogService, ICartService, IDiscountService, IPaymentService, ICheckoutService, IOrderService, IPricelistService, IImageService } from '../services/interfaces';
 import { HealthyCatalogService } from '../services/healthy/HealthyCatalogService';
 import { HealthyDiscountService } from '../services/healthy/HealthyDiscountService';
 import { HealthyCartService } from '../services/healthy/HealthyCartService';
@@ -6,6 +6,7 @@ import { HealthyPaymentService } from '../services/healthy/HealthyPaymentService
 import { HealthyCheckoutService } from '../services/healthy/HealthyCheckoutService';
 import { HealthyOrderService } from '../services/healthy/HealthyOrderService';
 import { HealthyPricelistService } from '../services/healthy/HealthyPricelistService';
+import { HealthyImageService } from '../services/healthy/HealthyImageService';
 
 export class ServiceResolver {
     private static catalogService: ICatalogService;
@@ -15,6 +16,7 @@ export class ServiceResolver {
     private static checkoutService: ICheckoutService;
     private static orderService: IOrderService;
     private static pricelistService: IPricelistService;
+    private static imageService: IImageService;
 
     static getCatalogService(): ICatalogService {
         if (!this.catalogService) {
@@ -70,5 +72,12 @@ export class ServiceResolver {
             this.orderService = new HealthyOrderService();
         }
         return this.orderService;
+    }
+
+    static getImageService(): IImageService {
+        if (!this.imageService) {
+            this.imageService = new HealthyImageService();
+        }
+        return this.imageService;
     }
 }

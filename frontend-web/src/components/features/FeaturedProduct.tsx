@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import styles from './FeaturedProduct.module.css';
 import Image from 'next/image';
 
-import { useCart } from '@/context/CartContext';
+import { useAppDispatch } from '@/store/hooks';
+import { addToCart } from '@/store/features/cart/cartSlice';
 
 const MOCK_FEATURED = {
     id: 'prod_001',
@@ -16,7 +17,7 @@ const MOCK_FEATURED = {
 };
 
 export default function FeaturedProduct() {
-    const { addToCart } = useCart();
+    const dispatch = useAppDispatch();
     const formattedPrice = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: MOCK_FEATURED.currency,
@@ -50,7 +51,7 @@ export default function FeaturedProduct() {
                     <p className={styles.description}>{MOCK_FEATURED.description}</p>
                     <div className={styles.priceRow}>
                         <span className={styles.price}>{formattedPrice}</span>
-                        <button className={styles.addBtn} onClick={() => addToCart(MOCK_FEATURED, 1)}>
+                        <button className={styles.addBtn} onClick={() => dispatch(addToCart({ product: MOCK_FEATURED, quantity: 1 }))}>
                             ADD TO CART
                         </button>
                     </div>

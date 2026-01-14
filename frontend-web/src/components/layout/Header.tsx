@@ -3,12 +3,11 @@
 import Link from 'next/link';
 import styles from './Header.module.css';
 import { LucideIcon, ShoppingCart, User as UserIcon } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
-import { useAuth } from '@/context/AuthContext';
-import { useUI } from '@/context/UIContext';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { setSelectedCategory, setCurrentSection } from '@/store/features/ui/uiSlice';
+import { logoutUser } from '@/store/features/auth/authSlice';
 import { useState, useEffect } from 'react';
 import CartDrawer from '@/components/features/CartDrawer';
-import { api } from '@/services/api';
 
 interface Category {
     id: string;
@@ -16,56 +15,83 @@ interface Category {
 }
 
 export default function Header() {
-    const { totalItems } = useCart();
-    const { user, logout } = useAuth();
+    const dispatch = useAppDispatch();
+
+    // UI State
+    const selectedCategory = useAppSelector(state => state.ui.selectedCategory);
+
+    // Cart State
+    const cartItems = useAppSelector(state => state.cart.items);
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    // Auth State
+    const user = useAppSelector(state => state.auth.user);
+
     const [isCartOpen, setIsCartOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('HOME');
-    const { setSelectedCategory } = useUI(); // Added setSelectedCategory from useUI
+    const [activeSection, setActiveSection] = useState('ROLLS');
     const [mounted, setMounted] = useState(false);
 
+    const handleLogout = () => {
+        dispatch(logoutUser());
+    };
+
+    const handleSetSelectedCategory = (category: string) => {
+        dispatch(setSelectedCategory(category));
+    };
+
     const menuItems = [
-        { name: 'HOME', section: 'hero', category: 'ALL' },
-        { name: 'ROLLS', section: 'store', category: 'ROLLS' },
-        { name: 'SETS', section: 'store', category: 'SETS' },
-        { name: 'HOT', section: 'store', category: 'HOT' },
-        { name: 'BUSINESS LUNCH', section: 'store', category: 'BUSINESS' },
-        { name: 'ABOUT ME', section: 'about', category: 'ALL' },
+        { name: 'HOME', section: 'hero', category: 'all' },
+        { name: 'ROLLS', section: 'store', category: 'rolls' },
+        { name: 'SETS', section: 'store', category: 'sets' },
+        { name: 'DRINKS', section: 'store', category: 'drinks' },
+        { name: 'ABOUT', section: 'about', category: 'all' },
     ];
 
     useEffect(() => {
         setMounted(true);
-        const handleScroll = () => {
-            const scrollPos = window.scrollY + 100; // Adjusted scroll position for better active section detection
-            const sections = ['hero', 'store', 'about'];
 
-            for (const sectionId of sections) {
-                const element = document.getElementById(sectionId);
-                if (element && scrollPos >= element.offsetTop && scrollPos < element.offsetTop + element.offsetHeight) {
-                    // Find the corresponding menu item for the active section
-                    const activeMenuItem = menuItems.find(item => item.section === sectionId);
-                    if (activeMenuItem) {
-                        setActiveSection(activeMenuItem.name);
-                    }
-                    break;
-                }
-            }
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -70% 0px', // Trigger when section is in top part of viewport
+            threshold: 0
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.id;
+                    if (sectionId === 'store') {
+                        const activeItem = menuItems.find(item =>
+                            item.section === 'store' &&
+                            item.category === selectedCategory.toLowerCase()
+                        );
+                        if (activeItem) setActiveSection(activeItem.name);
+                    } else {
+                        const activeMenuItem = menuItems.find(item => item.section === sectionId);
+                        if (activeMenuItem) setActiveSection(activeMenuItem.name);
+                    }
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        ['hero', 'store', 'about'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, [selectedCategory]);
 
     const handleNavClick = (item: typeof menuItems[0]) => {
         const element = document.getElementById(item.section);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
             if (item.section === 'store') {
-                setSelectedCategory(item.category);
-                setActiveSection(item.name);
-            } else {
-                setSelectedCategory('ALL'); // Reset category when navigating away from store
-                setActiveSection(item.name);
+                handleSetSelectedCategory(item.category);
             }
+            setActiveSection(item.name);
         }
     };
 
@@ -76,7 +102,7 @@ export default function Header() {
             <header className={styles.header}>
                 <div className={styles.navPill}>
                     <Link href="/" className={styles.logo} onClick={() => {
-                        setSelectedCategory('ALL');
+                        handleSetSelectedCategory('ALL');
                         setActiveSection('HOME');
                     }}>
                         SDETEDU.COM
@@ -96,7 +122,7 @@ export default function Header() {
 
                     <div className={styles.actions}>
                         {user ? (
-                            <button className={styles.iconBtn} onClick={logout} title="Logout">
+                            <button className={styles.iconBtn} onClick={handleLogout} title="Logout">
                                 <UserIcon size={20} color="var(--accent)" />
                             </button>
                         ) : (

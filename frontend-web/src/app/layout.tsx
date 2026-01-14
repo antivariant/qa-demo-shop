@@ -10,10 +10,7 @@ export const metadata: Metadata = {
 };
 
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import { CartProvider } from "@/context/CartContext";
-import { AuthProvider } from "@/context/AuthContext";
-import { UIProvider } from '@/context/UIContext';
+import StoreProvider from "@/providers/StoreProvider";
 import PageTransition from "@/components/layout/PageTransition";
 
 export default function RootLayout({
@@ -23,21 +20,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          <UIProvider>
-            <CartProvider>
-              <Header />
-              <main>
-                <PageTransition>
-                  {children}
-                </PageTransition>
-              </main>
-              <Footer />
-            </CartProvider>
-          </UIProvider>
-        </AuthProvider>
+      <body className={inter.className} suppressHydrationWarning>
+        <StoreProvider>
+          <Header />
+          <main>
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </main>
+        </StoreProvider>
       </body>
-    </html>
+    </html >
   );
 }

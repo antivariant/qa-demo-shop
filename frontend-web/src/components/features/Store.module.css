@@ -1,69 +1,121 @@
 .store {
-    height: 100vh;
+    height: calc(100vh - 80px);
+    /* Fit exactly in remaining space */
     width: 100vw;
-    display: flex;
-    overflow: hidden;
-    background: var(--bg-primary);
-    padding-top: 80px;
-    /* Header height */
-}
+    /* Force viewport width */
+    margin-left: -100px;
+    /* Counteract .main padding */
+    display: grid;
+    /* Strict 8x8 Grid */
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+    gap: var(--grid-gutter);
+    padding: var(--grid-margin);
 
-.left,
-.right {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
+    background: #000;
+    /* Pure black */
+    --accent-orange: #FF4D00;
+    --accent-blue: #00D2FF;
 }
 
 .left {
-    border: 1px solid var(--accent-cyan);
+    /* Columns 1-4, full height */
+    grid-column: 1 / 5;
+    grid-row: 1 / 9;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--accent-blue);
     border-radius: 2rem;
-    padding: 2.5rem;
-    margin-right: 1.5rem;
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+    padding: 3rem 2rem 2rem 2rem;
+    /* More top padding for absolute subtitle */
+
+    /* Box shadow/Glass effect if needed */
+    background: rgba(255, 255, 255, 0.02);
+
+    /* FIX: Clip content to border radius to prevent hover bleed/artifacts */
+    overflow: hidden;
+    position: relative;
 }
 
 .right {
+    grid-column: 5 / 9;
+    grid-row: 1 / 9;
+
     position: relative;
     overflow: hidden;
-    /* We handle scrolling via JS/Framer */
+    /* List container handles scroll */
+}
+
+.headerGroup {
+    display: flex;
+    flex-direction: row;
+    /* Single line */
+    align-items: baseline;
+    /* Align text baselines */
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* Reduced bottom margin */
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    width: 100%;
+    /* Ensure it takes width */
 }
 
 .title {
-    font-size: 5rem;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    /* Smaller max size */
     font-weight: 800;
     color: #fff;
-    margin-bottom: 0.5rem;
+    margin: 0;
     line-height: 1;
+    white-space: nowrap;
 }
 
 .subtitle {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 2.5rem;
-    display: block;
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent-orange);
+    margin: 0;
+    white-space: nowrap;
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 1.5rem;
-    align-content: start;
+    align-content: stretch;
+    /* Stretch to fill */
+    flex: 1;
+    min-height: 0;
 }
 
 /* Featured cards may have different responsive behavior if needed */
 .featuredGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--grid-gutter);
-    align-content: start;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.5rem;
+    align-content: stretch;
+    flex: 1;
+    min-height: 0;
+}
+
+.featuredGrid>* {
+    aspect-ratio: 2 / 3;
 }
 
 .listScrollContainer {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 100%;
     scrollbar-width: none;
     /* Hide scrollbar for technical look */
@@ -78,8 +130,8 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--grid-gutter);
     align-content: start;
-    padding-bottom: 20vh;
-    /* Allow last items to be partially hidden/revealed */
+    padding-bottom: 100px;
+    /* Reduced from 20vh to avoiding hitting boundaries too hard */
 }
 
 @media (max-width: 1024px) {
