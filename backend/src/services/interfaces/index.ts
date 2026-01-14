@@ -35,3 +35,7 @@ export interface ICheckoutService {
 export interface IOrderService {
     getUserOrders(userId: string): Promise<Order[]>;
 }
+
+export interface IImageService {
+    getImage(filename: string, width?: number): Promise<{ buffer: Buffer; mimeType: string }>;
+}

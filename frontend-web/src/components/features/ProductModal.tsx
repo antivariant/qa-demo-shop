@@ -3,7 +3,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './ProductModal.module.css';
 import { X, Plus } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import { useAppDispatch } from '@/store/hooks';
+import { addToCart } from '@/store/features/cart/cartSlice';
 import { Product } from './ProductCard';
 
 interface ProductModalProps {
@@ -12,12 +13,12 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ product, onClose }: ProductModalProps) {
-    const { addToCart } = useCart();
+    const dispatch = useAppDispatch();
 
     if (!product) return null;
 
     const handleAdd = () => {
-        addToCart(product, 1);
+        dispatch(addToCart({ product, quantity: 1 }));
         onClose();
     };
 

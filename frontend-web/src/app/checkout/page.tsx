@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { useCart } from '@/context/CartContext';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { clearCart } from '@/store/features/cart/cartSlice';
 import styles from './Checkout.module.css';
 import { ChevronLeft, CreditCard, Banknote, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -9,7 +10,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '@/services/api';
 
 export default function CheckoutPage() {
-    const { cart, subtotal, clearCart } = useCart();
+    const dispatch = useAppDispatch();
+    const cart = useAppSelector(state => state.cart.items);
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     const [isSuccess, setIsSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -32,7 +36,7 @@ export default function CheckoutPage() {
                 cardNumber: paymentMethod === 'card' ? cardNumber : undefined,
             });
             setIsSuccess(true);
-            clearCart();
+            dispatch(clearCart());
         } catch (err: any) {
             setError(err.message || 'Checkout failed');
         } finally {

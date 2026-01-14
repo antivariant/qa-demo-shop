@@ -15,42 +15,40 @@ export default function About() {
                     viewport={{ once: true }}
                     className={styles.section}
                 >
-                    <h2>About this Project</h2>
-                    <p>SDTETDU / DOJO is a personal engineering showcase built as an interactive product, not a static portfolio.</p>
-                    <p>The idea behind this project is simple: instead of describing skills in abstract terms, demonstrate them through a real system — with architecture, UI, automation, infrastructure, and constraints. The platform is intentionally designed as a hybrid between a product landing page, a modular store, and a technical sandbox.</p>
-                    <p>Every part of this project reflects practical engineering decisions:</p>
+                    <h2>About</h2>
+                    <p>This is a real, working system designed for testing practice, not a guided demo. What you can do right now:</p>
                     <ul>
-                        <li>how a frontend is structured and animated,</li>
-                        <li>how layouts are translated into real markup,</li>
-                        <li>how systems are tested, automated, and evolved,</li>
-                        <li>how product thinking and technical depth coexist.</li>
+                        <li>Use fixed test users (no registration). login: test.user@example.com pass: 123456</li>
+                        <li>Test payment scenarios using predefined test card numbers Different card numbers trigger different checkout outcomes:
+                            <ul>
+                                <li>9999 9999 9999 9999 - successful</li>
+                                <li>8888 8888 8888 8888 - insufficient funds</li>
+                            </ul>
+                        </li>
                     </ul>
-                    <p>This project is not a course platform and not a demo store. It is a living environment where ideas, experiments, and engineering approaches are validated in practice.</p>
-                    <p>DOJO represents a place of discipline and continuous improvement — a space where systems are tested, broken, rebuilt, and automated. Exactly the way real engineering work happens.</p>
-                </motion.div>
 
-                <div className={styles.divider}></div>
+                    <p>Practice UI automation on a realistic frontend. No special test-friendly markup or helper attributes are provided.</p>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    viewport={{ once: true }}
-                    className={styles.section}
-                >
-                    <h2>About Me</h2>
-                    <p>Hi, I’m Igor Gromov — a Software Engineer with a strong focus on Software Development in Test (SDET), backend development, penetration testing, and low-level systems.</p>
-                    <p>I work at the intersection of engineering, quality, and security. My background allows me to approach systems not only from a “does it work” perspective, but from a how it fails, how it scales, and how it can be improved standpoint.</p>
-                    <p>Over the years, I’ve:</p>
+                    <p>Test the system through multiple layers:</p>
                     <ul>
-                        <li>built and maintained automated testing frameworks and CI/CD pipelines,</li>
-                        <li>worked on backend and full-stack systems,</li>
-                        <li>performed security testing and vulnerability analysis,</li>
-                        <li>led QA teams and defined quality strategies across multiple projects,</li>
-                        <li>created and delivered technical training for engineers.</li>
+                        <li>Web frontend</li>
+                        <li>Public API</li>
+                        <li>Android application</li>
+                        <li>iOS application</li>
                     </ul>
-                    <p>Today, I’m open to opportunities where I can combine hands-on technical work with team leadership and system-level thinking — especially in roles related to QA, SDET, or engineering leadership.</p>
-                    <p>This site exists to show how I think, design, and build, not just what tools I know.</p>
+
+                    <p>The platform is intentionally minimal and close to real production behavior.</p>
+
+                    <h3>Current state</h3>
+                    <ul>
+                        <li>At this stage, no known bugs or vulnerabilities are intentionally exposed (though new ones may appear over time — try to find them).</li>
+                        <li>Arbitrary enabling or disabling of bugs is not yet available in the UI.</li>
+                        <li>Validation of reported issues is not automated at this stage.</li>
+                        <li>This platform evolves continuously.</li>
+                        <li>If you return later, the system may behave differently.</li>
+                    </ul>
+
+                    <p><strong>About me.</strong> Currently building a personal educational and engineering project related to software quality and testing, while remaining open to a QA / SDET Team Lead role.</p>
                 </motion.div>
 
                 <footer className={styles.footer}>

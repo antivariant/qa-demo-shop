@@ -8,6 +8,15 @@
 
 ## Public Endpoints
 
+### [GET] `/images/products/:filename`
+Get resized product image.
+- **Request**:
+  - `width` (query, optional): Target width in pixels.
+- **Response (200)**: Image binary (JPEG).
+- **Headers**:
+  - `Content-Type`: `image/jpeg`
+  - `Cache-Control`: Controlled by server config (e.g., `public, max-age=3600` or `no-store`).
+
 ### [GET] `/health`
 Check server status.
 - **Request**: None

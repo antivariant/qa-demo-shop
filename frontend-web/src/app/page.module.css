@@ -18,12 +18,14 @@
 }
 
 .main {
-  display: flex;
-  min-height: 100vh;
+  display: block;
+  height: 100vh;
+  /* Fixed height to enable scrolling within */
   width: 100%;
-  /* Removed max-width restriction */
-  flex-direction: column;
-  /* Removed alignment constraints */
+  overflow-y: auto;
+  /* Enable vertical scroll */
+  scroll-behavior: smooth;
+
   background-color: var(--foreground);
   padding-top: 80px;
   padding-right: 0;

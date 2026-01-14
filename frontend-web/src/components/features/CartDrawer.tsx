@@ -2,7 +2,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { updateQuantity, removeFromCart } from '@/store/features/cart/cartSlice';
 import styles from './CartDrawer.module.css';
 import Link from 'next/link';
 
@@ -12,7 +13,29 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-    const { cart, updateQuantity, removeFromCart, subtotal, totalItems } = useCart();
+    const dispatch = useAppDispatch();
+    const cart = useAppSelector(state => state.cart.items);
+
+    // Derived state
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    const handleUpdateQuantity = (id: string, qty: number) => {
+        dispatch(updateQuantity({ productId: cart.find(i => i.id === id)?.productId || id, quantity: qty }));
+        // Note: updateQuantity thunk expects productId (since it finds item by productId for local storage logic). 
+        // But context passed id? Context `updateQuantity` took `productId`.
+        // Cart item has `id` (cart item id) and `productId`.
+        // Let's check CartContext logic vs Slice logic again.
+    };
+
+    const handleRemoveFromCart = (id: string) => {
+        // Slice expects productId. Cart item in drawer has both.
+        // Check item type.
+        const item = cart.find(i => i.id === id);
+        if (item) {
+            dispatch(removeFromCart(item.productId));
+        }
+    };
 
     const formattedSubtotal = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -60,7 +83,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                         <div className={styles.itemInfo}>
                                             <div className={styles.itemHeader}>
                                                 <h3>{item.name}</h3>
-                                                <button onClick={() => removeFromCart(item.id)} className={styles.removeBtn}>
+                                                <button onClick={() => {
+                                                    dispatch(removeFromCart(item.productId));
+                                                }} className={styles.removeBtn}>
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -69,9 +94,15 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                             </p>
                                             <div className={styles.itemActions}>
                                                 <div className={styles.quantityPicker}>
-                                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus size={14} /></button>
+                                                    <button onClick={() => {
+                                                        const itemDesc = cart.find(i => i.id === item.id);
+                                                        if (itemDesc) dispatch(updateQuantity({ productId: itemDesc.productId, quantity: item.quantity - 1 }));
+                                                    }}><Minus size={14} /></button>
                                                     <span>{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus size={14} /></button>
+                                                    <button onClick={() => {
+                                                        const itemDesc = cart.find(i => i.id === item.id);
+                                                        if (itemDesc) dispatch(updateQuantity({ productId: itemDesc.productId, quantity: item.quantity + 1 }));
+                                                    }}><Plus size={14} /></button>
                                                 </div>
                                             </div>
                                         </div>
