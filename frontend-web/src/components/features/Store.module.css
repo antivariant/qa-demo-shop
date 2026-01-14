@@ -1,10 +1,8 @@
 .store {
     height: calc(100vh - 80px);
     /* Fit exactly in remaining space */
-    width: 100vw;
-    /* Force viewport width */
-    margin-left: -100px;
-    /* Counteract .main padding */
+    width: 100%;
+    margin: 0;
     display: grid;
     /* Strict 8x8 Grid */
     grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -136,22 +134,46 @@
 
 @media (max-width: 1024px) {
     .store {
+        display: flex;
         flex-direction: column;
         height: auto;
         overflow: visible;
+        padding: 5vh 5vw;
+        gap: 2rem;
     }
 
-    .left {
-        border-right: none;
-        border-bottom: 1px solid var(--glass-border);
-    }
-
+    .left,
     .right {
-        overflow: visible;
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+        height: auto;
+    }
+
+    .featuredGrid,
+    .listGrid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-rows: auto;
+        gap: 1.5rem;
     }
 
     .listScrollContainer {
         overflow-y: visible;
         height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .store {
+        padding: 2rem 1rem;
+    }
+
+    .featuredGrid,
+    .listGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 2rem;
     }
 }
