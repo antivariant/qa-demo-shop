@@ -2,15 +2,9 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/services/api'; // Re-use existing API service for now, or move logic here
 // We can use the existing api.ts which handles auth headers etc.
 
-export interface CartItem {
-    id: string; // Cart item ID (from backend)
-    productId: string; // The product ID
-    name: string;
-    price: number;
-    currency: string;
-    quantity: number;
-    imageUrl: string;
-}
+import { CartItem } from '@/types';
+
+// CartItem imported from types
 
 interface CartState {
     items: CartItem[];
@@ -37,7 +31,7 @@ export const fetchCart = createAsyncThunk(
         if (user) {
             try {
                 const data = await api.getCart();
-                return data.items || [];
+                return (data.items || []).filter((item: CartItem) => item.quantity > 0);
             } catch (err: any) {
                 return rejectWithValue(err.message);
             }
@@ -94,6 +88,7 @@ export const addToCart = createAsyncThunk(
                     id: Math.random().toString(36).substr(2, 9),
                     productId: product.id || product.productId,
                     ...product,
+                    currency: product.currency || 'USD',
                     quantity
                 }];
             }
@@ -115,14 +110,7 @@ export const updateQuantity = createAsyncThunk(
         if (!item) return rejectWithValue("Item not found");
 
         if (quantity <= 0) {
-            // Dispatch remove action? Or handle it here?
-            // Ideally we should call removeFromCart thunk but we can't easily dispatch thunk from thunk without circular deps or extra setup.
-            // We can just call the logic for remove here or let the component handle the <= 0 check.
-            // The existing context handled <= 0 by calling remove.
-            // We will assume the caller handles standardizing calls, or we duplicate logic for now.
-            // Let's defer to removeFromCart if 0.
-            // Converting to 0 -> remove logic might be better in the component, or we handle it here.
-            // For simplicity, let's implement update logic.
+            return dispatch(removeFromCart(productId)).unwrap();
         }
 
         if (user) {
@@ -133,9 +121,11 @@ export const updateQuantity = createAsyncThunk(
                 return rejectWithValue(err.message);
             }
         } else {
-            const newItems = cartItems.map((i: CartItem) =>
-                i.productId === productId ? { ...i, quantity } : i
-            );
+            const newItems = cartItems
+                .map((i: CartItem) =>
+                    i.productId === productId ? { ...i, quantity } : i
+                )
+                .filter((i: CartItem) => i.quantity > 0);
             localStorage.setItem('dojo_cart', JSON.stringify(newItems));
             return newItems;
         }

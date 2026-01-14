@@ -8,6 +8,8 @@ import { setSelectedCategory, setCurrentSection } from '@/store/features/ui/uiSl
 import { logoutUser } from '@/store/features/auth/authSlice';
 import { useState, useEffect } from 'react';
 import CartDrawer from '@/components/features/CartDrawer';
+import UserMenu from './UserMenu';
+import CheckoutModal from '@/components/features/CheckoutModal';
 
 interface Category {
     id: string;
@@ -28,11 +30,14 @@ export default function Header() {
     const user = useAppSelector(state => state.auth.user);
 
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('ROLLS');
     const [mounted, setMounted] = useState(false);
 
     const handleLogout = () => {
         dispatch(logoutUser());
+        setIsUserMenuOpen(false);
     };
 
     const handleSetSelectedCategory = (category: string) => {
@@ -43,7 +48,7 @@ export default function Header() {
         { name: 'HOME', section: 'hero', category: 'all' },
         { name: 'ROLLS', section: 'store', category: 'rolls' },
         { name: 'SETS', section: 'store', category: 'sets' },
-        { name: 'DRINKS', section: 'store', category: 'drinks' },
+        { name: 'HOT DISHES', section: 'store', category: 'hot_dishes' },
         { name: 'ABOUT', section: 'about', category: 'all' },
     ];
 
@@ -63,7 +68,7 @@ export default function Header() {
                     if (sectionId === 'store') {
                         const activeItem = menuItems.find(item =>
                             item.section === 'store' &&
-                            item.category === selectedCategory.toLowerCase()
+                            item.category === selectedCategory
                         );
                         if (activeItem) setActiveSection(activeItem.name);
                     } else {
@@ -122,7 +127,7 @@ export default function Header() {
 
                     <div className={styles.actions}>
                         {user ? (
-                            <button className={styles.iconBtn} onClick={handleLogout} title="Logout">
+                            <button className={styles.iconBtn} onClick={() => setIsUserMenuOpen(true)} title="Account">
                                 <UserIcon size={20} color="var(--accent)" />
                             </button>
                         ) : (
@@ -138,7 +143,17 @@ export default function Header() {
                 </div>
             </header>
 
-            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} onOpenCheckout={() => setIsCheckoutOpen(true)} />
+            <CheckoutModal
+                isOpen={isCheckoutOpen}
+                onClose={() => setIsCheckoutOpen(false)}
+            />
+            <UserMenu
+                isOpen={isUserMenuOpen}
+                onClose={() => setIsUserMenuOpen(false)}
+                onLogout={handleLogout}
+                username={user?.displayName || user?.email || 'User'}
+            />
         </>
     );
 }

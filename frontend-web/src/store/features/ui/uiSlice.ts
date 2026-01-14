@@ -6,7 +6,7 @@ interface UIState {
 }
 
 const initialState: UIState = {
-    selectedCategory: 'rolls', // Default matching existing context
+    selectedCategory: 'rolls', // Match backend IDs
     currentSection: 'HOME',
 };
 

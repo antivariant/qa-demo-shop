@@ -1,0 +1,158 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner:
+    - generic [ref=e2]:
+      - link "SDETEDU.COM" [ref=e3] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e4]:
+        - generic [ref=e5] [cursor=pointer]: HOME
+        - generic [ref=e6] [cursor=pointer]: ROLLS
+        - generic [ref=e7] [cursor=pointer]: SETS
+        - generic [ref=e8] [cursor=pointer]: HOT DISHES
+        - generic [ref=e9] [cursor=pointer]: ABOUT
+      - generic [ref=e10]:
+        - link [ref=e11] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e12]
+        - button "1" [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+          - generic [ref=e20]: "1"
+  - generic [ref=e23]:
+    - button [ref=e24] [cursor=pointer]:
+      - img [ref=e25]
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - img [ref=e30]
+        - heading "CHECKOUT" [level=2] [ref=e33]
+      - generic [ref=e34]:
+        - heading "ORDER SUMMARY" [level=3] [ref=e35]
+        - generic [ref=e37]:
+          - generic [ref=e38]: California Gold x 1
+          - generic [ref=e39]: $11.00
+        - generic [ref=e40]:
+          - generic [ref=e41]: TOTAL
+          - generic [ref=e42]: $11.00
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]: CARD NUMBER
+          - generic [ref=e46]:
+            - img [ref=e47]
+            - textbox "0000 0000 0000 0000" [ref=e49]: "4242424242424242"
+        - paragraph [ref=e50]: Failed to checkout
+        - button "PAY $11.00" [ref=e51] [cursor=pointer]
+  - main [ref=e52]:
+    - generic [ref=e54]:
+      - generic [ref=e56]:
+        - generic:
+          - img "Hero Mascot"
+        - generic [ref=e57]:
+          - paragraph [ref=e58]: Tester, Pentester, SDET Training Platform
+          - heading "DOJO" [level=1] [ref=e59]
+          - generic [ref=e60]:
+            - generic [ref=e61]: TEST ME!
+            - generic [ref=e62]: HACK ME!
+            - generic [ref=e63]: AUTOMATE IT!
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: Hacker's choice
+          - generic [ref=e67]:
+            - generic [ref=e68] [cursor=pointer]:
+              - img "California Gold" [ref=e70]
+              - generic [ref=e71]:
+                - generic [ref=e72]:
+                  - heading "California Gold" [level=3] [ref=e73]
+                  - generic [ref=e74]: 11$
+                - generic [ref=e76]:
+                  - button "-" [ref=e77]
+                  - generic [ref=e78]: "1"
+                  - button "+" [ref=e79]
+            - generic [ref=e80] [cursor=pointer]:
+              - img "Green Dragon" [ref=e82]
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - heading "Green Dragon" [level=3] [ref=e85]
+                  - generic [ref=e86]: 14$
+                - button [ref=e88]:
+                  - img [ref=e89]
+            - generic [ref=e90] [cursor=pointer]:
+              - img "Philadelphia Classic" [ref=e92]
+              - generic [ref=e93]:
+                - generic [ref=e94]:
+                  - heading "Philadelphia Classic" [level=3] [ref=e95]
+                  - generic [ref=e96]: 12$
+                - button [ref=e98]:
+                  - img [ref=e99]
+            - generic [ref=e100] [cursor=pointer]:
+              - img "Spicy Tuna" [ref=e102]
+              - generic [ref=e103]:
+                - generic [ref=e104]:
+                  - heading "Spicy Tuna" [level=3] [ref=e105]
+                  - generic [ref=e106]: 10$
+                - button [ref=e108]:
+                  - img [ref=e109]
+        - generic [ref=e113] [cursor=pointer]:
+          - img "Tempura Shrimp" [ref=e115]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - heading "Tempura Shrimp" [level=3] [ref=e118]
+              - generic [ref=e119]: 11$
+            - button [ref=e121]:
+              - img [ref=e122]
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - heading "About" [level=2] [ref=e126]
+          - paragraph [ref=e127]: "This is a real, working system designed for testing practice, not a guided demo. What you can do right now:"
+          - list [ref=e128]:
+            - listitem [ref=e129]: "- Use fixed test users (no registration). login: test.user@example.com pass: 123456"
+            - listitem [ref=e130]:
+              - text: "- Test payment scenarios using predefined test card numbers Different card numbers trigger different checkout outcomes:"
+              - list [ref=e131]:
+                - listitem [ref=e132]: "-- 9999 9999 9999 9999 - successful"
+                - listitem [ref=e133]: "-- 8888 8888 8888 8888 - insufficient funds"
+          - paragraph [ref=e134]: Practice UI automation on a realistic frontend. No special test-friendly markup or helper attributes are provided.
+          - paragraph [ref=e135]: "Test the system through multiple layers:"
+          - list [ref=e136]:
+            - listitem [ref=e137]: "- Web frontend"
+            - listitem [ref=e138]: "- Public API"
+            - listitem [ref=e139]: "- Android application"
+            - listitem [ref=e140]: "- iOS application"
+          - paragraph [ref=e141]: The platform is intentionally minimal and close to real production behavior.
+          - heading "Current state" [level=3] [ref=e142]
+          - list [ref=e143]:
+            - listitem [ref=e144]: "- At this stage, no known bugs or vulnerabilities are intentionally exposed (though new ones may appear over time — try to find them)."
+            - listitem [ref=e145]: "- Arbitrary enabling or disabling of bugs is not yet available in the UI."
+            - listitem [ref=e146]: "- Validation of reported issues is not automated at this stage."
+            - listitem [ref=e147]: "- This platform evolves continuously."
+            - listitem [ref=e148]: "- If you return later, the system may behave differently."
+          - paragraph [ref=e149]:
+            - strong [ref=e150]: About me.
+            - text: Currently building a personal educational and engineering project related to software quality and testing, while remaining open to a QA / SDET Team Lead role.
+        - generic [ref=e151]:
+          - generic [ref=e152]: Copyright © 2026 Igor Gromov
+          - generic [ref=e153]:
+            - link [ref=e154] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e155]
+            - link [ref=e159] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e160]
+            - link [ref=e163] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e164]
+          - generic [ref=e167]: Coded by Antigravity
+  - generic [ref=e172] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e173]:
+      - img [ref=e174]
+    - generic [ref=e177]:
+      - button "Open issues overlay" [ref=e178]:
+        - generic [ref=e179]:
+          - generic [ref=e180]: "0"
+          - generic [ref=e181]: "1"
+        - generic [ref=e182]: Issue
+      - button "Collapse issues badge" [ref=e183]:
+        - img [ref=e184]
+  - paragraph [ref=e186]: Running in emulator mode. Do not use with production credentials.
+  - alert [ref=e187]
+```

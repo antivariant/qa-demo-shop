@@ -7,14 +7,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addToCart, updateQuantity } from '@/store/features/cart/cartSlice';
 import { useState, useEffect } from 'react';
 
-export interface Product {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    currency: string;
-    imageUrl: string;
-}
+// Product imported from types
+import { Product } from '@/types';
 
 interface ProductCardProps {
     product: Product;
@@ -58,6 +52,7 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
             className={`${styles.card} ${variant === 'featured' ? styles.variant_featured : styles.variant_list}`}
             onClick={() => onClick?.(product)}
             initial={false}
+            data-testid="product-card"
         >
             <div className={styles.imageWrapper}>
                 <img src={product.imageUrl} alt={product.name} className={styles.image} />
@@ -65,12 +60,12 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
             <div className={styles.info}>
                 <div className={styles.textData}>
                     <h3 className={styles.name}>{product.name}</h3>
-                    <span className={styles.price}>{formattedPrice}</span>
+                    <span className={styles.price} data-testid="product-price">{formattedPrice}</span>
                 </div>
 
                 <div className={styles.actions} onClick={e => e.stopPropagation()}>
                     {quantity === 0 ? (
-                        <button className={styles.addBtn} onClick={handleAdd}>
+                        <button className={styles.addBtn} onClick={handleAdd} data-testid="add-btn">
                             <Plus size={24} />
                         </button>
                     ) : (
@@ -79,6 +74,7 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
                             initial="initial"
                             whileHover="hover"
                             animate="initial"
+                            data-testid="quantity-controls"
                         >
                             <motion.button
                                 className={`${styles.controlBtn} ${styles.minusBtn}`}
@@ -87,6 +83,7 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
                                     initial: { x: 20, opacity: 0 },
                                     hover: { x: 0, opacity: 1 }
                                 }}
+                                data-testid="decrement-btn"
                             >
                                 -
                             </motion.button>
@@ -102,6 +99,7 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
                                     initial: { x: -20, opacity: 0 },
                                     hover: { x: 0, opacity: 1 }
                                 }}
+                                data-testid="increment-btn"
                             >
                                 +
                             </motion.button>

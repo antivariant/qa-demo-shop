@@ -32,10 +32,10 @@ export const logoutUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
     'auth/login',
-    async (email: string) => {
+    async ({ email, password }: { email: string; password: string }) => {
         const { signInWithEmailAndPassword } = await import('firebase/auth');
         const { auth } = await import('@/services/firebase');
-        await signInWithEmailAndPassword(auth, email, "password123");
+        await signInWithEmailAndPassword(auth, email, password);
         // State update handled by listener in StoreProvider
     }
 );

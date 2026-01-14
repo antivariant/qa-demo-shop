@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { Product, Category } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -6,10 +7,10 @@ export const productsApi = createApi({
     reducerPath: 'productsApi',
     baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
     endpoints: (builder) => ({
-        getCategories: builder.query<string[], void>({
+        getCategories: builder.query<Category[], void>({
             query: () => '/categories',
         }),
-        getProducts: builder.query<any[], string | void>({
+        getProducts: builder.query<Product[], string | void>({
             query: (category) => {
                 if (category && category !== 'ALL') {
                     return `/products?category=${category}`;
@@ -17,7 +18,7 @@ export const productsApi = createApi({
                 return '/products';
             },
         }),
-        getProduct: builder.query<any, string>({
+        getProduct: builder.query<Product, string>({
             query: (id) => `/products/${id}`,
         }),
     }),

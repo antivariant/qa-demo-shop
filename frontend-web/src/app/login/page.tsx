@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export default function LoginPage() {
         setError('');
 
         try {
-            await dispatch(loginUser(email)).unwrap(); // Ensure thunk errors are caught
+            await dispatch(loginUser({ email, password })).unwrap(); // Ensure thunk errors are caught
             router.push('/');
         } catch (err: any) {
             setError(err.message || 'Failed to login');
@@ -47,6 +48,17 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="chef@dojo.com"
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>PASSWORD</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••"
                             required
                         />
                     </div>

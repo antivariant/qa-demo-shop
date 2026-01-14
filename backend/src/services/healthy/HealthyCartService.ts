@@ -91,6 +91,7 @@ export class HealthyCartService implements ICartService {
             const newItem: CartItem = {
                 productId: productId,
                 name: product.name,
+                imageUrl: product.imageUrl,
                 price: price,
                 quantity: quantity,
                 itemTotal: price * quantity
