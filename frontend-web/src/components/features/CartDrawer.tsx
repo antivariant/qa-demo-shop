@@ -1,18 +1,20 @@
 "use client";
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { updateQuantity, removeFromCart } from '@/store/features/cart/cartSlice';
 import styles from './CartDrawer.module.css';
-import Link from 'next/link';
+import CheckoutModal from './CheckoutModal';
 
 interface CartDrawerProps {
     isOpen: boolean;
     onClose: () => void;
+    onOpenCheckout: () => void;
 }
 
-export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDrawerProps) {
     const dispatch = useAppDispatch();
     const cart = useAppSelector(state => state.cart.items);
 
@@ -78,8 +80,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 </div>
                             ) : (
                                 cart.map(item => (
-                                    <div key={item.id} className={styles.item}>
-                                        <img src={item.imageUrl} alt={item.name} className={styles.itemImage} />
+                                    <div key={item.productId} className={styles.item}>
+                                        <img src={item.imageUrl} alt={item.name} className={styles.itemImage} data-testid="cart-item-image" />
                                         <div className={styles.itemInfo}>
                                             <div className={styles.itemHeader}>
                                                 <h3>{item.name}</h3>
@@ -90,18 +92,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                 </button>
                                             </div>
                                             <p className={styles.itemPrice}>
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency }).format(item.price / 100)}
+                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency || 'USD' }).format(item.price / 100)}
                                             </p>
                                             <div className={styles.itemActions}>
                                                 <div className={styles.quantityPicker}>
                                                     <button onClick={() => {
-                                                        const itemDesc = cart.find(i => i.id === item.id);
-                                                        if (itemDesc) dispatch(updateQuantity({ productId: itemDesc.productId, quantity: item.quantity - 1 }));
+                                                        dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity - 1 }));
                                                     }}><Minus size={14} /></button>
                                                     <span>{item.quantity}</span>
                                                     <button onClick={() => {
-                                                        const itemDesc = cart.find(i => i.id === item.id);
-                                                        if (itemDesc) dispatch(updateQuantity({ productId: itemDesc.productId, quantity: item.quantity + 1 }));
+                                                        dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity + 1 }));
                                                     }}><Plus size={14} /></button>
                                                 </div>
                                             </div>
@@ -118,9 +118,15 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                     <span className={styles.subtotalValue}>{formattedSubtotal}</span>
                                 </div>
                                 <p className={styles.note}>Shipping and taxes calculated at checkout.</p>
-                                <Link href="/checkout" onClick={onClose} className={styles.checkoutBtn}>
+                                <button
+                                    onClick={() => {
+                                        onClose(); // Close the drawer first
+                                        onOpenCheckout(); // Open modal
+                                    }}
+                                    className={styles.checkoutBtn}
+                                >
                                     CHECKOUT
-                                </Link>
+                                </button>
                             </div>
                         )}
                     </motion.div>

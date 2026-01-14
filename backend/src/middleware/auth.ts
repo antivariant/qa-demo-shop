@@ -18,8 +18,12 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
         const decodedToken = await admin.auth().verifyIdToken(token!);
         req.user = decodedToken;
         next();
-    } catch (error) {
-        console.error('Error verifying token:', error);
-        return res.status(401).json({ error: 'Invalid token', errorCode: 'invalid_token' });
+    } catch (error: any) {
+        console.error('Error verifying token:', error.message || error);
+        return res.status(401).json({
+            error: 'Invalid token',
+            errorCode: 'invalid_token',
+            details: error.message
+        });
     }
 }
