@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './Header.module.css';
 import { LucideIcon, ShoppingCart, User as UserIcon } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
@@ -10,6 +11,8 @@ import { useState, useEffect } from 'react';
 import CartDrawer from '@/components/features/CartDrawer';
 import UserMenu from './UserMenu';
 import CheckoutModal from '@/components/features/CheckoutModal';
+import { auth } from '@/services/firebase';
+import CartMergeModal from '@/components/features/CartMergeModal';
 
 interface Category {
     id: string;
@@ -18,6 +21,7 @@ interface Category {
 
 export default function Header() {
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     // UI State
     const selectedCategory = useAppSelector(state => state.ui.selectedCategory);
@@ -28,6 +32,7 @@ export default function Header() {
 
     // Auth State
     const user = useAppSelector(state => state.auth.user);
+    const isLoggedIn = Boolean(user || auth.currentUser);
 
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -126,15 +131,19 @@ export default function Header() {
                     </nav>
 
                     <div className={styles.actions}>
-                        {user ? (
-                            <button className={styles.iconBtn} onClick={() => setIsUserMenuOpen(true)} title="Account">
-                                <UserIcon size={20} color="var(--accent)" />
-                            </button>
-                        ) : (
-                            <Link href="/login" className={styles.iconBtn}>
-                                <UserIcon size={20} />
-                            </Link>
-                        )}
+                        <button
+                            className={styles.iconBtn}
+                            onClick={() => {
+                                if (isLoggedIn) {
+                                    setIsUserMenuOpen(true);
+                                } else {
+                                    router.push('/login');
+                                }
+                            }}
+                            title="Account"
+                        >
+                            <UserIcon size={20} color={isLoggedIn ? "var(--accent)" : undefined} />
+                        </button>
                         <button className={styles.iconBtn} onClick={() => setIsCartOpen(true)}>
                             <ShoppingCart size={20} />
                             {totalItems > 0 && <span className={styles.cartBadge}>{totalItems}</span>}
@@ -143,7 +152,18 @@ export default function Header() {
                 </div>
             </header>
 
-            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} onOpenCheckout={() => setIsCheckoutOpen(true)} />
+            <CartDrawer
+                isOpen={isCartOpen}
+                onClose={() => setIsCartOpen(false)}
+                onOpenCheckout={() => {
+                    if (!user) {
+                        setIsCartOpen(false);
+                        router.push('/login');
+                        return;
+                    }
+                    setIsCheckoutOpen(true);
+                }}
+            />
             <CheckoutModal
                 isOpen={isCheckoutOpen}
                 onClose={() => setIsCheckoutOpen(false)}
@@ -154,6 +174,7 @@ export default function Header() {
                 onLogout={handleLogout}
                 username={user?.displayName || user?.email || 'User'}
             />
+            <CartMergeModal />
         </>
     );
 }
