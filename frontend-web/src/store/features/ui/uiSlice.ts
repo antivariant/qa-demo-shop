@@ -6,7 +6,7 @@ interface UIState {
 }
 
 const initialState: UIState = {
-    selectedCategory: 'rolls', // Match backend IDs
+    selectedCategory: 'all', // Show all products by default
     currentSection: 'HOME',
 };
 

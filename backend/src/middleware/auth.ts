@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
+import * as fs from 'fs';
 
 export interface AuthRequest extends Request {
     user?: admin.auth.DecodedIdToken;
@@ -7,8 +8,12 @@ export interface AuthRequest extends Request {
 
 export async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
+    if (authHeader) {
+        fs.appendFileSync('auth-debug.log', `\n[${new Date().toISOString()}] Incoming ${req.method} ${req.path} | Has Header: true\n`);
+    }
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        if (!authHeader) process.stdout.write(`[AUTH] Missing Authorization header\n`);
         return res.status(401).json({ error: 'Unauthorized', errorCode: 'unauthorized' });
     }
 
@@ -19,7 +24,7 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
         req.user = decodedToken;
         next();
     } catch (error: any) {
-        console.error('Error verifying token:', error.message || error);
+        fs.appendFileSync('auth-debug.log', `\n[${new Date().toISOString()}] AUTH ERROR: ${error.message}\nCode: ${error.code}\n`);
         return res.status(401).json({
             error: 'Invalid token',
             errorCode: 'invalid_token',
