@@ -61,6 +61,7 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                         className={styles.drawer}
+                        data-testid="cart-drawer"
                     >
                         <div className={styles.header}>
                             <div className={styles.titleGroup}>
@@ -80,14 +81,14 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
                                 </div>
                             ) : (
                                 cart.map(item => (
-                                    <div key={item.productId} className={styles.item}>
+                                    <div key={item.productId} className={styles.item} data-testid="cart-item">
                                         <img src={item.imageUrl} alt={item.name} className={styles.itemImage} data-testid="cart-item-image" />
                                         <div className={styles.itemInfo}>
                                             <div className={styles.itemHeader}>
                                                 <h3>{item.name}</h3>
                                                 <button onClick={() => {
                                                     dispatch(removeFromCart(item.productId));
-                                                }} className={styles.removeBtn}>
+                                                }} className={styles.removeBtn} data-testid="remove-btn">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
