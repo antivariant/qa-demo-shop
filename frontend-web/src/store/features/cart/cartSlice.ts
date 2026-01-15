@@ -10,12 +10,16 @@ interface CartState {
     items: CartItem[];
     loading: boolean;
     error: string | null;
+    mergePrompt: { anonymousItems: CartItem[]; serverItems: CartItem[] } | null;
+    mergeResolving: boolean;
 }
 
 const initialState: CartState = {
     items: [],
     loading: false,
     error: null,
+    mergePrompt: null,
+    mergeResolving: false,
 };
 
 // Helper to check if user is logged in (crude check, better to pass from component or state)
@@ -36,16 +40,7 @@ export const fetchCart = createAsyncThunk(
                 return rejectWithValue(err.message);
             }
         } else {
-            const savedCart = localStorage.getItem('dojo_cart');
-            if (savedCart) {
-                try {
-                    return JSON.parse(savedCart);
-                } catch (e) {
-                    console.error("Failed to parse local cart", e);
-                    return [];
-                }
-            }
-            return [];
+            return (state.cart.items as CartItem[]).filter((item: CartItem) => item.quantity > 0);
         }
     }
 );
@@ -65,13 +60,7 @@ export const addToCart = createAsyncThunk(
                 return rejectWithValue(err.message);
             }
         } else {
-            // LocalStorage logic mimics the API response or just returns the new items list
-            // We need to return the NEW items array to the reducer.
-            // But strict Redux reducers should be pure.
-            // Thunks can be impure (reading localStorage).
-
-            // Read current items from state to avoid race conditions with localStorage?
-            // Or just read from state.cart.items
+            // Anonymous cart stays in Redux state only.
             const currentItems = state.cart.items as CartItem[];
 
             const existing = currentItems.find((item: CartItem) => item.productId === (product.id || product.productId));
@@ -93,7 +82,6 @@ export const addToCart = createAsyncThunk(
                 }];
             }
 
-            localStorage.setItem('dojo_cart', JSON.stringify(newItems));
             return newItems;
         }
     }
@@ -126,7 +114,6 @@ export const updateQuantity = createAsyncThunk(
                     i.productId === productId ? { ...i, quantity } : i
                 )
                 .filter((i: CartItem) => i.quantity > 0);
-            localStorage.setItem('dojo_cart', JSON.stringify(newItems));
             return newItems;
         }
     }
@@ -151,7 +138,6 @@ export const removeFromCart = createAsyncThunk(
             }
         } else {
             const newItems = cartItems.filter((i: CartItem) => i.productId !== productId);
-            localStorage.setItem('dojo_cart', JSON.stringify(newItems));
             return newItems;
         }
     }
@@ -159,13 +145,7 @@ export const removeFromCart = createAsyncThunk(
 
 export const clearCart = createAsyncThunk(
     'cart/clearCart',
-    async (_, { getState }) => {
-        const state = getState() as any;
-        const user = state.auth.user;
-
-        if (!user) {
-            localStorage.removeItem('dojo_cart');
-        }
+    async () => {
         // If user, maybe we need an API call to clear? The existing context didn't seem to have a clearCart API call, just local state clear.
         // Wait, context `clearCart` just did `setCart([])`.
         // If logged in, does it clear backend? The context code:
@@ -176,10 +156,45 @@ export const clearCart = createAsyncThunk(
     }
 );
 
+export const resolveCartMerge = createAsyncThunk(
+    'cart/resolveCartMerge',
+    async ({ keepCurrent }: { keepCurrent: boolean }, { getState, rejectWithValue }) => {
+        const state = getState() as any;
+        const prompt = state.cart.mergePrompt as { anonymousItems: CartItem[]; serverItems: CartItem[] } | null;
+
+        if (!prompt) return [];
+
+        try {
+            if (keepCurrent) {
+                await api.clearCart();
+                for (const item of prompt.anonymousItems) {
+                    await api.addToCart(item.productId, item.quantity);
+                }
+                const updatedCart = await api.getCart();
+                return (updatedCart.items || []).filter((item: CartItem) => item.quantity > 0);
+            }
+
+            return prompt.serverItems;
+        } catch (err: any) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 export const cartSlice = createSlice({
     name: 'cart',
     initialState,
-    reducers: {},
+    reducers: {
+        setCartItems: (state, action: PayloadAction<CartItem[]>) => {
+            state.items = action.payload;
+        },
+        setMergePrompt: (state, action: PayloadAction<{ anonymousItems: CartItem[]; serverItems: CartItem[] }>) => {
+            state.mergePrompt = action.payload;
+        },
+        clearMergePrompt: (state) => {
+            state.mergePrompt = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             // Fetch Cart
@@ -210,8 +225,23 @@ export const cartSlice = createSlice({
             // Clear Cart
             .addCase(clearCart.fulfilled, (state, action) => {
                 state.items = [];
+            })
+            // Resolve cart merge
+            .addCase(resolveCartMerge.pending, (state) => {
+                state.mergeResolving = true;
+                state.error = null;
+            })
+            .addCase(resolveCartMerge.fulfilled, (state, action) => {
+                state.mergeResolving = false;
+                state.items = action.payload as CartItem[];
+                state.mergePrompt = null;
+            })
+            .addCase(resolveCartMerge.rejected, (state, action) => {
+                state.mergeResolving = false;
+                state.error = action.payload as string;
             });
     },
 });
 
+export const { setCartItems, setMergePrompt, clearMergePrompt } = cartSlice.actions;
 export default cartSlice.reducer;

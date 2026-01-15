@@ -28,19 +28,25 @@ function waitForAuth(): Promise<any> {
     });
 }
 
-async function getHeaders() {
+async function getHeaders(options?: { requireAuth?: boolean }) {
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
     };
 
     try {
         const user = await waitForAuth();
+        if (!user && options?.requireAuth) {
+            throw new Error('Not authenticated');
+        }
         if (user) {
             const token = await getIdToken(user);
             headers['Authorization'] = `Bearer ${token}`;
         }
     } catch (err) {
         console.error('Error getting headers:', err);
+        if (options?.requireAuth) {
+            throw err;
+        }
     }
 
     return headers;
@@ -107,12 +113,19 @@ export const api = {
         if (!res.ok) throw new Error('Failed to remove from cart');
         return res.json();
     },
+    clearCart: async (): Promise<void> => {
+        const res = await fetch(`${BASE_URL}/cart`, {
+            method: 'DELETE',
+            headers: await getHeaders({ requireAuth: true }),
+        });
+        if (!res.ok) throw new Error('Failed to clear cart');
+    },
 
     // Checkout
     checkout: async (payload: { paymentMethod: 'card' | 'cash'; cardNumber?: string }): Promise<CheckoutResponse> => {
         const res = await fetch(`${BASE_URL}/checkout`, {
             method: 'POST',
-            headers: await getHeaders(),
+            headers: await getHeaders({ requireAuth: true }),
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Failed to checkout');
