@@ -12,7 +12,10 @@ export default function Store() {
     const selectedCategory = useAppSelector(state => state.ui.selectedCategory);
 
     // RTK Query hook handles fetching, caching, and state
-    const { data: allProducts, isLoading, error } = useGetProductsQuery(selectedCategory === 'all' ? undefined : selectedCategory);
+    // Always fetch all products when selectedCategory is 'all' or undefined
+    const { data: allProducts, isLoading, error } = useGetProductsQuery(
+        selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined
+    );
 
     const [products, setProducts] = useState<Product[]>([]);
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -27,8 +30,8 @@ export default function Store() {
 
     useEffect(() => {
         if (allProducts) {
-            setFeaturedProducts(allProducts.slice(0, 4));
-            setProducts(allProducts.slice(4));
+            setFeaturedProducts(allProducts.slice(0, 6));
+            setProducts(allProducts.slice(6));
         }
     }, [allProducts]);
 

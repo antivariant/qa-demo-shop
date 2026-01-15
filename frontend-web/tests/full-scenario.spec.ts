@@ -31,10 +31,10 @@ test.describe('Full Shop Scenario', () => {
 
         // Clear Cart
         await page.locator('header button svg.lucide-shopping-cart').locator('..').click();
-        const itemsInCart = page.locator('div[class*="CartDrawer_item__"]');
+        const itemsInCart = page.getByTestId('cart-item');
         let itemCount = await itemsInCart.count();
         while (itemCount > 0) {
-            await itemsInCart.first().locator('button:has(svg.lucide-trash-2)').click();
+            await itemsInCart.first().getByTestId('remove-btn').click();
             await page.waitForTimeout(400);
             itemCount = await itemsInCart.count();
         }
@@ -98,7 +98,7 @@ test.describe('Full Shop Scenario', () => {
         await page.getByText('CHECKOUT').click();
 
         await expect(page.locator('h2:has-text("CHECKOUT")')).toBeVisible();
-        await page.fill('input[placeholder*="0000"]', '4242424242424242');
+        await page.fill('input[placeholder*="0000"]', '9999999999999999');
         await page.click('button:has-text("PAY")');
 
         await expect(page.getByText('ORDER SUCCESSFUL!')).toBeVisible({ timeout: 20000 });
