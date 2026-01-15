@@ -21,34 +21,36 @@
 /* Variant overrides */
 .variant_featured {
     width: 100%;
-    height: 100%;
-    /* Fill the grid cell */
-    aspect-ratio: unset;
-    /* Let container dictate shape */
+    /* Same aspect ratio as list cards: square image + 1/3 for info */
+    aspect-ratio: 3 / 4;
 }
 
 .variant_list {
     width: 100%;
-    aspect-ratio: 0.8;
+    /* Height is 4/3 of width: square image (1) + 1/3 for info */
+    aspect-ratio: 3 / 4;
 }
 
 .imageWrapper {
-    flex: 1;
-    /* Take up available space */
+    /* Square image area - takes exactly the width of the card */
     width: 100%;
+    aspect-ratio: 1 / 1;
+    /* Image stays square */
     position: relative;
     overflow: hidden;
-    padding: 0.5rem;
-    /* Reduced from 1.5rem */
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+    /* Don't shrink the image area */
 }
 
 .image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    /* Fill the square space completely */
     transition: transform 0.5s ease;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
     /* Pop from background */
@@ -59,19 +61,24 @@
 }
 
 .info {
-    padding: 1rem;
+    /* Take remaining 1/3 of card height */
+    flex: 1;
+    min-height: 0;
+    padding: 0.75rem 1rem;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
+    background: #000;
+    /* Match the mockup's solid black base */
 }
 
 .textData {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.1rem;
+    overflow: hidden;
 }
 
 .name {

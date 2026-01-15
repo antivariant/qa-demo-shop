@@ -4,11 +4,13 @@
     width: 100%;
     margin: 0;
     display: grid;
-    /* Strict 8x8 Grid */
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-template-rows: repeat(8, minmax(0, 1fr));
+    /* 5 columns: 3 for Featured (left), 2 for List (right) */
+    grid-template-columns: repeat(5, 1fr);
+    /* Let rows be auto but container is fixed height, scroll handles overflow */
+    grid-template-rows: auto;
     gap: var(--grid-gutter);
-    padding: var(--grid-margin);
+    padding: var(--grid-margin) 5vw;
+    /* 5vw horizontal padding for comfortable spacing */
 
     overflow: hidden;
     background: #000;
@@ -18,9 +20,9 @@
 }
 
 .left {
-    /* Columns 1-4, full height */
-    grid-column: 1 / 5;
-    grid-row: 1 / 9;
+    /* Columns 1-4 (3 columns) */
+    grid-column: 1 / 4;
+    grid-row: 1 / 2;
 
     display: flex;
     flex-direction: column;
@@ -39,8 +41,9 @@
 }
 
 .right {
-    grid-column: 5 / 9;
-    grid-row: 1 / 9;
+    /* Columns 4-6 (2 columns) */
+    grid-column: 4 / 6;
+    grid-row: 1 / 2;
 
     position: relative;
     overflow: hidden;
@@ -96,10 +99,10 @@
     min-height: 0;
 }
 
-/* Featured cards may have different responsive behavior if needed */
+/* Featured cards - 3x2 grid */
 .featuredGrid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 1.5rem;
     align-content: stretch;
@@ -107,8 +110,10 @@
     min-height: 0;
 }
 
+/* Featured cards maintain 4:3 aspect ratio like list cards */
 .featuredGrid>* {
-    aspect-ratio: 2 / 3;
+    width: 100%;
+    /* Let the card's aspect-ratio (4:3) determine the height */
 }
 
 .listScrollContainer {
@@ -125,7 +130,8 @@
 
 .listGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    /* 2 columns to show 2x2 grid of products */
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--grid-gutter);
     align-content: start;
     padding-bottom: 100px;
@@ -138,7 +144,7 @@
         flex-direction: column;
         height: auto;
         overflow: visible;
-        padding: 5vh 5vw;
+        padding: 2rem var(--grid-margin);
         gap: 2rem;
     }
 
@@ -150,9 +156,14 @@
         height: auto;
     }
 
-    .featuredGrid,
+    .featuredGrid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto;
+        gap: 1.5rem;
+    }
+
     .listGrid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         grid-template-rows: auto;
         gap: 1.5rem;
     }
