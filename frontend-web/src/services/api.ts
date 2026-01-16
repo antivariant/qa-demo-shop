@@ -1,5 +1,5 @@
 import { auth } from './firebase';
-import { getIdToken } from 'firebase/auth';
+import { getIdToken, User } from 'firebase/auth';
 import { Product, Category, Cart, CheckoutResponse } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
@@ -8,7 +8,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/
  * Helper to get the current user, waiting for auth to initialize if necessary.
  * This is more robust as it handles the initial Firebase load state.
  */
-function waitForAuth(): Promise<any> {
+function waitForAuth(): Promise<User | null> {
     return new Promise((resolve) => {
         // If already have a user, resolve immediately
         if (auth.currentUser) {
@@ -132,7 +132,7 @@ export const api = {
         return res.json();
     },
 
-    getOrders: async (): Promise<any[]> => {
+    getOrders: async (): Promise<unknown[]> => {
         const res = await fetch(`${BASE_URL}/orders`, {
             headers: await getHeaders(),
         });

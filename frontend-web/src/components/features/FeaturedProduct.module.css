@@ -22,11 +22,11 @@
     border-radius: 2rem;
     overflow: hidden;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    aspect-ratio: 4 / 3;
 }
 
 .image {
-    width: 100%;
-    aspect-ratio: 4/3;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
