@@ -103,7 +103,7 @@ export const updateQuantity = createAsyncThunk(
 
         if (user) {
             try {
-                const updatedCart = await api.updateCartItem(item.id, quantity);
+                const updatedCart = await api.updateCartItem(item.productId, quantity);
                 return updatedCart.items;
             } catch (err: any) {
                 return rejectWithValue(err.message);
@@ -131,7 +131,7 @@ export const removeFromCart = createAsyncThunk(
 
         if (user) {
             try {
-                const updatedCart = await api.removeCartItem(item.id);
+                const updatedCart = await api.removeCartItem(item.productId);
                 return updatedCart.items;
             } catch (err: any) {
                 return rejectWithValue(err.message);
