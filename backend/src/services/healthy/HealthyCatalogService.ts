@@ -32,6 +32,7 @@ export class HealthyCatalogService implements ICatalogService {
                     description: productData.description,
                     imageUrl: productData.imageUrl,
                     categoryId: productData.categoryId,
+                    featured: Boolean(productData.featured),
                     price: price,
                     currency: 'USD' // Default for demo
                 } as Product);
@@ -56,6 +57,7 @@ export class HealthyCatalogService implements ICatalogService {
             description: productData.description,
             imageUrl: productData.imageUrl,
             categoryId: productData.categoryId,
+            featured: Boolean(productData.featured),
             price: price,
             currency: 'USD'
         } as Product;

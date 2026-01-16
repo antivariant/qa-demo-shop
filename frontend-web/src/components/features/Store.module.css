@@ -2,15 +2,16 @@
     height: calc(100vh - 80px);
     /* Fit exactly in remaining space */
     width: 100%;
-    margin: 0;
+    max-width: 1400px;
+    margin: 0 auto;
     display: grid;
     /* 5 columns: 3 for Featured (left), 2 for List (right) */
     grid-template-columns: repeat(5, 1fr);
     /* Let rows be auto but container is fixed height, scroll handles overflow */
     grid-template-rows: auto;
     gap: var(--grid-gutter);
-    padding: var(--grid-margin) 5vw;
-    /* 5vw horizontal padding for comfortable spacing */
+    padding: var(--grid-margin) clamp(64px, 14vw, 280px);
+    /* Side padding keeps featured cards from becoming too square on wide screens */
 
     overflow: hidden;
     background: #000;

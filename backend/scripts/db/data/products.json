@@ -4,7 +4,7 @@
     "description": "Premium salmon, cream cheese, cucumber, and avocado.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/philadelphia.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
   "california_roll": {
     "name": "California Gold",
@@ -18,21 +18,21 @@
     "description": "Eel, cucumber, topped with avocado and unagi sauce.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/dragon.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
   "spicy_tuna_roll": {
     "name": "Spicy Tuna",
     "description": "Fresh tuna with spicy mayo and green onion.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/spicy_tuna2.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
   "tempura_shrimp_roll": {
     "name": "Tempura Shrimp",
     "description": "Crispy shrimp tempura, cucumber, and spicy mayo.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/srimp_tempura.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
 
 
@@ -62,14 +62,14 @@
     "description": "Grilled eel with cream cheese and cucumber.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/eel_sushi.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
   "rainbow_roll": {
     "name": "Rainbow Roll",
     "description": "California roll topped with assorted fish.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/rainbow_roll.jpg?width=300",
     "categoryId": "rolls",
-    "featured": false
+    "featured": true
   },
   "spicy_salmon_roll": {
     "name": "Spicy Salmon",
@@ -92,7 +92,7 @@
     "description": "Udon noodles with chicken and vegetables.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/chicken_udon_soup.jpg?width=300",
     "categoryId": "hot_dishes",
-    "featured": false
+    "featured": true
   },
   "salmon_teriyaki": {
     "name": "Salmon Teriyaki",
@@ -106,7 +106,7 @@
     "description": "Fried dumplings with pork filling.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/pork_gyoza.jpg?width=300",
     "categoryId": "hot_dishes",
-    "featured": false
+    "featured": true
   },
   "gyoza_veggie": {
     "name": "Vegetable Gyoza",
@@ -201,13 +201,154 @@
     "description": "Large set for big company.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/large_set.jpg?width=300",
     "categoryId": "sets",
-    "featured": false
+    "featured": true
   },
   "premium_set": {
     "name": "Premium Set",
     "description": "Premium fish and ingredients.",
     "imageUrl": "http://127.0.0.1:3000/api/images/products/premium_set.jpg?width=300",
     "categoryId": "sets",
+    "featured": true
+  },
+
+
+  "beef_udon": {
+    "name": "Beef Udon",
+    "description": "Thick udon noodles with tender beef and vegetables.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/beef_udon_soup.jpg?width=300",
+    "categoryId": "hot_dishes",
     "featured": false
+  },
+  "shrimp_tempura_hot": {
+    "name": "Shrimp Tempura",
+    "description": "Crispy fried shrimp with dipping sauce.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/shrimp_tempura.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": false
+  },
+  "vegetable_tempura": {
+    "name": "Vegetable Tempura",
+    "description": "Assorted seasonal vegetables in light batter.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/veg_tempura.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": false
+  },
+  "rice_chicken_bowl": {
+    "name": "Chicken Rice Bowl",
+    "description": "Steamed rice topped with chicken and sauce.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/chicken_rice.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": true
+  },
+  "rice_beef_bowl": {
+    "name": "Beef Rice Bowl",
+    "description": "Rice bowl with beef and vegetables.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/beef_rice.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": true
+  },
+  "miso_soup": {
+    "name": "Miso Soup",
+    "description": "Traditional soup with tofu, wakame, and green onions.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/miso_tofu.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": true
+  },
+  "teriyaki_chicken": {
+    "name": "Chicken Teriyaki",
+    "description": "Grilled chicken with teriyaki sauce and steamed rice.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/chicken_teriyaki.jpg?width=300",
+    "categoryId": "hot_dishes",
+    "featured": true
+  },
+
+
+    "lunch_basic": {
+    "name": "Basic Business Lunch",
+    "description": "Miso soup, California roll, and green tea.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/basic_lunch.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_premium": {
+    "name": "Premium Business Lunch",
+    "description": "Miso soup, Philadelphia roll, nigiri, and tea.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/premium_lunch.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_combo_1": {
+    "name": "Combo Lunch A",
+    "description": "Sushi rolls, rice, and soup.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/combo_lunch1.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_combo_2": {
+    "name": "Combo Lunch B",
+    "description": "Hot dish with sushi rolls.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/lunch_set2.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_combo_3": {
+    "name": "Combo Lunch C",
+    "description": "Chef’s choice lunch set.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/lunch_set3.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_light": {
+    "name": "Light Lunch",
+    "description": "Soup, salad, and light rolls.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/lunch_light.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": true
+  },
+  "lunch_spicy": {
+    "name": "Spicy Lunch",
+    "description": "Spicy rolls and hot dish.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/spicy_lunch.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": false
+  },
+  "lunch_fish": {
+    "name": "Fish Lunch",
+    "description": "Grilled fish, rice, and soup.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/fish_set.jpg?width=300",
+    "categoryId": "business_lunch",
+    "featured": false
+  },
+
+
+    "party_set_s": {
+    "name": "Small Party Set",
+    "description": "24 pieces: Philadelphia, California, and Spicy Tuna.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/small_party_set.jpg?width=300",
+    "categoryId": "sets",
+    "featured": true
+  },
+  "party_set_m": {
+    "name": "Medium Party Set",
+    "description": "40 pieces: Philadelphia, California, Dragon, and Tempura Shrimp.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/medium_party_set.jpg?width=300",
+    "categoryId": "sets",
+    "featured": true
+  },
+  "party_set_l": {
+    "name": "Family Party Set",
+    "description": "64 pieces: Best-selling rolls and nigiri.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/family_set2.jpg?width=300",
+    "categoryId": "sets",
+    "featured": true
+  },
+  "veggie_set": {
+    "name": "Veggie Delight Set",
+    "description": "Vegetarian sushi assortment.",
+    "imageUrl": "http://127.0.0.1:3000/api/images/products/veg_set.jpg?width=300",
+    "categoryId": "sets",
+    "featured": true
   }
+
+
 }
