@@ -1,6 +1,6 @@
 import { auth } from './firebase';
 import { getIdToken, User } from 'firebase/auth';
-import { Product, Category, Cart, CheckoutResponse } from '@/types';
+import { Product, Category, Cart, CheckoutResponse, SdetUser } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -137,6 +137,35 @@ export const api = {
             headers: await getHeaders(),
         });
         if (!res.ok) throw new Error('Failed to fetch orders');
+        return res.json();
+    },
+
+    // SDET User
+    getSdetUser: async (): Promise<SdetUser> => {
+        const res = await fetch(`${BASE_URL}/sdet/user`, {
+            headers: await getHeaders({ requireAuth: true }),
+        });
+        if (!res.ok) throw new Error('Failed to fetch SDET user profile');
+        return res.json();
+    },
+
+    updateSdetUser: async (payload: { name?: string }): Promise<SdetUser> => {
+        const res = await fetch(`${BASE_URL}/sdet/user`, {
+            method: 'PUT',
+            headers: await getHeaders({ requireAuth: true }),
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('Failed to update SDET user profile');
+        return res.json();
+    },
+
+    registerSdetUser: async (payload: { email: string; password: string; name?: string }): Promise<SdetUser> => {
+        const res = await fetch(`${BASE_URL}/sdet/auth/register`, {
+            method: 'POST',
+            headers: await getHeaders(),
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('Failed to register SDET user');
         return res.json();
     },
 };
