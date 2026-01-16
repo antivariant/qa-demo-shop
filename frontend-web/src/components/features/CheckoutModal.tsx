@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CreditCard, Banknote, ShoppingBag, CheckCircle } from 'lucide-react';
+import { X, CreditCard, ShoppingBag, CheckCircle } from 'lucide-react';
 import styles from './CheckoutModal.module.css';
 import { CheckoutResponse } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { clearCart, fetchCart } from '@/store/features/cart/cartSlice';
+import { fetchCart } from '@/store/features/cart/cartSlice';
 import { api } from '@/services/api';
 
 interface CheckoutModalProps {
@@ -60,9 +60,10 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             // Critical: Fetch the new empty cart from backend to sync frontend state
             dispatch(fetchCart());
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            setError(err.message || 'Checkout failed. Please try again.');
+            const message = err instanceof Error ? err.message : 'Checkout failed. Please try again.';
+            setError(message);
         } finally {
             setLoading(false);
         }

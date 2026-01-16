@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/services/api'; // Re-use existing API service for now, or move logic here
 // We can use the existing api.ts which handles auth headers etc.
 
-import { CartItem } from '@/types';
+import { CartItem, Product } from '@/types';
+import type { RootState } from '@/store/store';
 
 // CartItem imported from types
 
@@ -26,58 +27,63 @@ const initialState: CartState = {
 // But thunks can access state via getState()
 // We need to know if we should talk to API or LocalStorage.
 
-export const fetchCart = createAsyncThunk(
+export const fetchCart = createAsyncThunk<CartItem[], void, { state: RootState; rejectValue: string }>(
     'cart/fetchCart',
     async (_, { getState, rejectWithValue }) => {
-        const state = getState() as any; // Need RootState type, but circular dependency if imported. Use any for now.
+        const state = getState();
         const user = state.auth.user;
 
         if (user) {
             try {
                 const data = await api.getCart();
                 return (data.items || []).filter((item: CartItem) => item.quantity > 0);
-            } catch (err: any) {
-                return rejectWithValue(err.message);
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'Failed to fetch cart';
+                return rejectWithValue(message);
             }
         } else {
-            return (state.cart.items as CartItem[]).filter((item: CartItem) => item.quantity > 0);
+            return state.cart.items.filter((item: CartItem) => item.quantity > 0);
         }
     }
 );
 
-export const addToCart = createAsyncThunk(
+type AddToCartPayload = { product: Product | CartItem; quantity: number };
+
+export const addToCart = createAsyncThunk<CartItem[], AddToCartPayload, { state: RootState; rejectValue: string }>(
     'cart/addToCart',
-    async ({ product, quantity }: { product: any; quantity: number }, { getState, rejectWithValue }) => {
-        const state = getState() as any;
+    async ({ product, quantity }, { getState, rejectWithValue }) => {
+        const state = getState();
         const user = state.auth.user;
+        const productId = 'id' in product ? product.id : product.productId;
 
         if (user) {
             try {
                 // api.addToCart returns the updated cart structure
-                const updatedCart = await api.addToCart(product.id || product.productId, quantity);
+                const updatedCart = await api.addToCart(productId, quantity);
                 return updatedCart.items;
-            } catch (err: any) {
-                return rejectWithValue(err.message);
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'Failed to add to cart';
+                return rejectWithValue(message);
             }
         } else {
             // Anonymous cart stays in Redux state only.
-            const currentItems = state.cart.items as CartItem[];
+            const currentItems = state.cart.items;
 
-            const existing = currentItems.find((item: CartItem) => item.productId === (product.id || product.productId));
+            const existing = currentItems.find((item: CartItem) => item.productId === productId);
             let newItems;
 
             if (existing) {
                 newItems = currentItems.map((item: CartItem) =>
-                    item.productId === (product.id || product.productId)
+                    item.productId === productId
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
                 newItems = [...currentItems, {
                     id: Math.random().toString(36).substr(2, 9),
-                    productId: product.id || product.productId,
+                    productId,
                     ...product,
-                    currency: product.currency || 'USD',
+                    currency: 'currency' in product ? product.currency : 'USD',
                     quantity
                 }];
             }
@@ -87,12 +93,12 @@ export const addToCart = createAsyncThunk(
     }
 );
 
-export const updateQuantity = createAsyncThunk(
+export const updateQuantity = createAsyncThunk<CartItem[], { productId: string; quantity: number }, { state: RootState; rejectValue: string }>(
     'cart/updateQuantity',
-    async ({ productId, quantity }: { productId: string; quantity: number }, { getState, rejectWithValue, dispatch }) => {
-        const state = getState() as any;
+    async ({ productId, quantity }, { getState, rejectWithValue, dispatch }) => {
+        const state = getState();
         const user = state.auth.user;
-        const cartItems = state.cart.items as CartItem[];
+        const cartItems = state.cart.items;
         const item = cartItems.find((i: CartItem) => i.productId === productId);
 
         if (!item) return rejectWithValue("Item not found");
@@ -105,8 +111,9 @@ export const updateQuantity = createAsyncThunk(
             try {
                 const updatedCart = await api.updateCartItem(item.productId, quantity);
                 return updatedCart.items;
-            } catch (err: any) {
-                return rejectWithValue(err.message);
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'Failed to update cart';
+                return rejectWithValue(message);
             }
         } else {
             const newItems = cartItems
@@ -119,12 +126,12 @@ export const updateQuantity = createAsyncThunk(
     }
 );
 
-export const removeFromCart = createAsyncThunk(
+export const removeFromCart = createAsyncThunk<CartItem[], string, { state: RootState; rejectValue: string }>(
     'cart/removeFromCart',
     async (productId: string, { getState, rejectWithValue }) => {
-        const state = getState() as any;
+        const state = getState();
         const user = state.auth.user;
-        const cartItems = state.cart.items as CartItem[];
+        const cartItems = state.cart.items;
         const item = cartItems.find((i: CartItem) => i.productId === productId);
 
         if (!item) return rejectWithValue("Item not found");
@@ -133,8 +140,9 @@ export const removeFromCart = createAsyncThunk(
             try {
                 const updatedCart = await api.removeCartItem(item.productId);
                 return updatedCart.items;
-            } catch (err: any) {
-                return rejectWithValue(err.message);
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'Failed to remove from cart';
+                return rejectWithValue(message);
             }
         } else {
             const newItems = cartItems.filter((i: CartItem) => i.productId !== productId);
@@ -143,7 +151,7 @@ export const removeFromCart = createAsyncThunk(
     }
 );
 
-export const clearCart = createAsyncThunk(
+export const clearCart = createAsyncThunk<CartItem[]>(
     'cart/clearCart',
     async () => {
         // If user, maybe we need an API call to clear? The existing context didn't seem to have a clearCart API call, just local state clear.
@@ -156,10 +164,10 @@ export const clearCart = createAsyncThunk(
     }
 );
 
-export const resolveCartMerge = createAsyncThunk(
+export const resolveCartMerge = createAsyncThunk<CartItem[], { keepCurrent: boolean }, { state: RootState; rejectValue: string }>(
     'cart/resolveCartMerge',
-    async ({ keepCurrent }: { keepCurrent: boolean }, { getState, rejectWithValue }) => {
-        const state = getState() as any;
+    async ({ keepCurrent }, { getState, rejectWithValue }) => {
+        const state = getState();
         const prompt = state.cart.mergePrompt as { anonymousItems: CartItem[]; serverItems: CartItem[] } | null;
 
         if (!prompt) return [];
@@ -175,8 +183,9 @@ export const resolveCartMerge = createAsyncThunk(
             }
 
             return prompt.serverItems;
-        } catch (err: any) {
-            return rejectWithValue(err.message);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to resolve cart merge';
+            return rejectWithValue(message);
         }
     }
 );
@@ -223,7 +232,7 @@ export const cartSlice = createSlice({
                 state.items = action.payload;
             })
             // Clear Cart
-            .addCase(clearCart.fulfilled, (state, action) => {
+            .addCase(clearCart.fulfilled, (state) => {
                 state.items = [];
             })
             // Resolve cart merge

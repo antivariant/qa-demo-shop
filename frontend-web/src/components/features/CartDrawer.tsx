@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { updateQuantity, removeFromCart } from '@/store/features/cart/cartSlice';
 import styles from './CartDrawer.module.css';
-import CheckoutModal from './CheckoutModal';
+import Image from 'next/image';
 
 interface CartDrawerProps {
     isOpen: boolean;
@@ -21,23 +20,6 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
     // Derived state
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-    const handleUpdateQuantity = (id: string, qty: number) => {
-        dispatch(updateQuantity({ productId: cart.find(i => i.id === id)?.productId || id, quantity: qty }));
-        // Note: updateQuantity thunk expects productId (since it finds item by productId for local storage logic). 
-        // But context passed id? Context `updateQuantity` took `productId`.
-        // Cart item has `id` (cart item id) and `productId`.
-        // Let's check CartContext logic vs Slice logic again.
-    };
-
-    const handleRemoveFromCart = (id: string) => {
-        // Slice expects productId. Cart item in drawer has both.
-        // Check item type.
-        const item = cart.find(i => i.id === id);
-        if (item) {
-            dispatch(removeFromCart(item.productId));
-        }
-    };
 
     const formattedSubtotal = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -68,7 +50,7 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
                                 <ShoppingBag size={24} />
                                 <h2>YOUR CART ({totalItems})</h2>
                             </div>
-                            <button onClick={onClose} className={styles.closeBtn}>
+                            <button onClick={onClose} className={styles.closeBtn} aria-label="Close cart" title="Close cart">
                                 <X size={24} />
                             </button>
                         </div>
@@ -82,13 +64,27 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
                             ) : (
                                 cart.map(item => (
                                     <div key={item.productId} className={styles.item} data-testid="cart-item">
-                                        <img src={item.imageUrl} alt={item.name} className={styles.itemImage} data-testid="cart-item-image" />
+                                        <Image
+                                            src={item.imageUrl}
+                                            alt={item.name}
+                                            className={styles.itemImage}
+                                            width={100}
+                                            height={100}
+                                            data-testid="cart-item-image"
+                                            unoptimized
+                                        />
                                         <div className={styles.itemInfo}>
                                             <div className={styles.itemHeader}>
                                                 <h3>{item.name}</h3>
-                                                <button onClick={() => {
-                                                    dispatch(removeFromCart(item.productId));
-                                                }} className={styles.removeBtn} data-testid="remove-btn">
+                                                <button
+                                                    onClick={() => {
+                                                        dispatch(removeFromCart(item.productId));
+                                                    }}
+                                                    className={styles.removeBtn}
+                                                    data-testid="remove-btn"
+                                                    aria-label={`Remove ${item.name} from cart`}
+                                                    title={`Remove ${item.name} from cart`}
+                                                >
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -97,13 +93,25 @@ export default function CartDrawer({ isOpen, onClose, onOpenCheckout }: CartDraw
                                             </p>
                                             <div className={styles.itemActions}>
                                                 <div className={styles.quantityPicker}>
-                                                    <button onClick={() => {
-                                                        dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity - 1 }));
-                                                    }}><Minus size={14} /></button>
+                                                    <button
+                                                        onClick={() => {
+                                                            dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity - 1 }));
+                                                        }}
+                                                        aria-label={`Decrease ${item.name} quantity`}
+                                                        title={`Decrease ${item.name} quantity`}
+                                                    >
+                                                        <Minus size={14} />
+                                                    </button>
                                                     <span>{item.quantity}</span>
-                                                    <button onClick={() => {
-                                                        dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity + 1 }));
-                                                    }}><Plus size={14} /></button>
+                                                    <button
+                                                        onClick={() => {
+                                                            dispatch(updateQuantity({ productId: item.productId, quantity: item.quantity + 1 }));
+                                                        }}
+                                                        aria-label={`Increase ${item.name} quantity`}
+                                                        title={`Increase ${item.name} quantity`}
+                                                    >
+                                                        <Plus size={14} />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
