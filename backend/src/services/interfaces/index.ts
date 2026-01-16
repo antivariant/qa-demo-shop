@@ -1,4 +1,4 @@
-import { Product, Cart, Order, Money, PaymentMethod, Category } from '../../domain/types';
+import { Product, Cart, Order, Money, PaymentMethod, Category, SdetUser } from '../../domain/types';
 
 export interface IPricelistService {
     getActivePrice(productId: string): Promise<Money | null>;
@@ -38,4 +38,9 @@ export interface IOrderService {
 
 export interface IImageService {
     getImage(filename: string, width?: number): Promise<{ buffer: Buffer; mimeType: string }>;
+}
+
+export interface ISdetUserService {
+    getOrCreate(userId: string, payload: { email: string | null; displayName: string | null; name?: string }): Promise<SdetUser>;
+    update(userId: string, updates: { name?: string }): Promise<SdetUser>;
 }
