@@ -56,9 +56,9 @@ export default function About() {
                         © 2026 Igor Gromov. Use it. Fork it. Build on it. Just give credit. (MIT + CC BY 4.0)
                     </div>
                     <div className={styles.socials}>
-                        <a href="#"><Linkedin size={24} /></a>
-                        <a href="#"><Send size={24} /></a>
-                        <a href="#"><Github size={24} /></a>
+                        <a href="#" aria-label="LinkedIn" title="LinkedIn"><Linkedin size={24} /></a>
+                        <a href="#" aria-label="Telegram" title="Telegram"><Send size={24} /></a>
+                        <a href="#" aria-label="GitHub" title="GitHub"><Github size={24} /></a>
                     </div>
                     <div className={styles.footerRight}>
                         AI-assisted. Human-built. Codex, Antigravity, and hands-on engineering. 

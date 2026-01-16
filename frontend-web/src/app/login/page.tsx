@@ -23,8 +23,9 @@ export default function LoginPage() {
         try {
             await dispatch(loginUser({ email, password })).unwrap(); // Ensure thunk errors are caught
             router.push('/');
-        } catch (err: any) {
-            setError(err.message || 'Failed to login');
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to login';
+            setError(message);
         } finally {
             setIsLoading(false);
         }

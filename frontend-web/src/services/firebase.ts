@@ -14,7 +14,8 @@ const auth = getAuth(app);
 // Connect to Auth Emulator if host is provided
 if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST) {
     // Only connect if not already connected (prevents error in HMR)
-    if (!(auth as any)._emulatorConfig) {
+    const emulatorConfig = (auth as { _emulatorConfig?: unknown })._emulatorConfig;
+    if (!emulatorConfig) {
         connectAuthEmulator(auth, `http://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST}`);
     }
 }

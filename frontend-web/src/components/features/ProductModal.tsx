@@ -5,7 +5,8 @@ import styles from './ProductModal.module.css';
 import { X, Plus } from 'lucide-react';
 import { useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/store/features/cart/cartSlice';
-import { Product } from './ProductCard';
+import Image from 'next/image';
+import { Product } from '@/types';
 
 interface ProductModalProps {
     product: Product | null;
@@ -44,7 +45,14 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                         <div className={styles.grid}>
                             <div className={styles.imageSection}>
-                                <img src={product.imageUrl} alt={product.name} className={styles.image} />
+                                <Image
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    className={styles.image}
+                                    fill
+                                    sizes="(max-width: 900px) 100vw, 50vw"
+                                    unoptimized
+                                />
                             </div>
 
                             <div className={styles.infoSection}>

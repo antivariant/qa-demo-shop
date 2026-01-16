@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './Hero.module.css';
 
 export default function Hero() {
@@ -14,10 +15,13 @@ export default function Hero() {
                     transition={{ duration: 1.0, ease: "easeOut", delay: 0.5 }}
                     className={styles.imageContainer}
                 >
-                    <img
+                    <Image
                         src="/images/mascot.png"
                         alt="Hero Mascot"
                         className={styles.mascot}
+                        width={520}
+                        height={520}
+                        priority
                     />
                 </motion.div>
 
