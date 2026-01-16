@@ -10,7 +10,7 @@
     /* Let rows be auto but container is fixed height, scroll handles overflow */
     grid-template-rows: auto;
     gap: var(--grid-gutter);
-    padding: var(--grid-margin) clamp(40px, 10vw, 200px);
+    padding: var(--grid-margin) clamp(64px, 14vw, 280px);
     /* Side padding keeps featured cards from becoming too square on wide screens */
 
     overflow: hidden;

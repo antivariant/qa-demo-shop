@@ -53,7 +53,7 @@ export default function About() {
 
                 <footer className={styles.footer}>
                     <div className={styles.footerLeft}>
-                        Copyright © 2026 Igor Gromov
+                        © 2026 Igor Gromov. Use it. Fork it. Build on it. Just give credit. (MIT + CC BY 4.0)
                     </div>
                     <div className={styles.socials}>
                         <a href="#"><Linkedin size={24} /></a>
@@ -61,7 +61,7 @@ export default function About() {
                         <a href="#"><Github size={24} /></a>
                     </div>
                     <div className={styles.footerRight}>
-                        Coded by Antigravity
+                        AI-assisted. Human-built. Codex, Antigravity, and hands-on engineering. 
                     </div>
                 </footer>
             </div>
