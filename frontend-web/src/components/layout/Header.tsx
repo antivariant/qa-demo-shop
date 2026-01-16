@@ -3,21 +3,20 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './Header.module.css';
-import { LucideIcon, ShoppingCart, User as UserIcon } from 'lucide-react';
+import { ShoppingCart, User as UserIcon } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setSelectedCategory, setCurrentSection } from '@/store/features/ui/uiSlice';
+import { setSelectedCategory } from '@/store/features/ui/uiSlice';
 import { logoutUser } from '@/store/features/auth/authSlice';
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import CartDrawer from '@/components/features/CartDrawer';
 import UserMenu from './UserMenu';
 import CheckoutModal from '@/components/features/CheckoutModal';
 import { auth } from '@/services/firebase';
 import CartMergeModal from '@/components/features/CartMergeModal';
+import { useGetCategoriesQuery } from '@/services/productsApi';
+import { Category } from '@/types';
 
-interface Category {
-    id: string;
-    name: string;
-}
+const formatCategoryLabel = (name: string) => name.replace(/_/g, ' ').toUpperCase();
 
 export default function Header() {
     const dispatch = useAppDispatch();
@@ -37,8 +36,9 @@ export default function Header() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('ROLLS');
+    const [activeSection, setActiveSection] = useState('HOME');
     const [mounted, setMounted] = useState(false);
+    const { data: categories = [] } = useGetCategoriesQuery();
 
     const handleLogout = () => {
         dispatch(logoutUser());
@@ -49,13 +49,19 @@ export default function Header() {
         dispatch(setSelectedCategory(category));
     };
 
-    const menuItems = [
-        { name: 'HOME', section: 'hero', category: 'all' },
-        { name: 'ROLLS', section: 'store', category: 'rolls' },
-        { name: 'SETS', section: 'store', category: 'sets' },
-        { name: 'HOT DISHES', section: 'store', category: 'hot_dishes' },
-        { name: 'ABOUT', section: 'about', category: 'all' },
-    ];
+    const menuItems = useMemo(() => {
+        const dynamicCategories = categories.map((category: Category) => ({
+            name: formatCategoryLabel(category.name),
+            section: 'store',
+            category: category.id,
+        }));
+
+        return [
+            { name: 'HOME', section: 'hero', category: 'all' },
+            ...dynamicCategories,
+            { name: 'ABOUT', section: 'about', category: 'all' },
+        ];
+    }, [categories]);
 
     useEffect(() => {
         setMounted(true);
@@ -75,7 +81,12 @@ export default function Header() {
                             item.section === 'store' &&
                             item.category === selectedCategory
                         );
-                        if (activeItem) setActiveSection(activeItem.name);
+                        if (activeItem) {
+                            setActiveSection(activeItem.name);
+                        } else {
+                            const fallbackItem = menuItems.find(item => item.section === 'store');
+                            if (fallbackItem) setActiveSection(fallbackItem.name);
+                        }
                     } else {
                         const activeMenuItem = menuItems.find(item => item.section === sectionId);
                         if (activeMenuItem) setActiveSection(activeMenuItem.name);
@@ -92,7 +103,7 @@ export default function Header() {
         });
 
         return () => observer.disconnect();
-    }, [selectedCategory]);
+    }, [menuItems, selectedCategory]);
 
     const handleNavClick = (item: typeof menuItems[0]) => {
         const element = document.getElementById(item.section);
@@ -112,7 +123,7 @@ export default function Header() {
             <header className={styles.header}>
                 <div className={styles.navPill}>
                     <Link href="/" className={styles.logo} onClick={() => {
-                        handleSetSelectedCategory('ALL');
+                        handleSetSelectedCategory('all');
                         setActiveSection('HOME');
                     }}>
                         SDETEDU.COM
