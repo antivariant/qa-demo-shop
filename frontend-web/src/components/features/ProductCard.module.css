@@ -22,13 +22,13 @@
 .variant_featured {
     width: 100%;
     /* Same aspect ratio as list cards: square image + 1/3 for info */
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2 / 3;
 }
 
 .variant_list {
     width: 100%;
     /* Height is 4/3 of width: square image (1) + 1/3 for info */
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2 / 3;
 }
 
 .imageWrapper {
