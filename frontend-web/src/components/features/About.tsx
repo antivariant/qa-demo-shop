@@ -49,7 +49,7 @@ export default function About() {
                         <li>If you return later, the system may behave differently.</li>
                     </ul>
 
-                    <p><strong>What means Dojo?</strong> A dojo (道場) is a Japanese term for a hall or place for immersive learning, traditionally for martial arts like Judo, Karate, or Aikido, meaning "place of the Way," emphasizing discipline and personal growth beyond just physical training.</p>
+                    <p><strong>What means Dojo?</strong> A dojo (道場) is a Japanese term for a hall or place for immersive learning, traditionally for martial arts like Judo, Karate, or Aikido, meaning &ldquo;place of the Way,&ldquo; emphasizing discipline and personal growth beyond just physical training.</p>
 
                     <p><strong>About me.</strong> Currently building a personal educational and engineering project related to software quality and testing, while remaining open to a QA / SDET Team Lead role.</p>
 
