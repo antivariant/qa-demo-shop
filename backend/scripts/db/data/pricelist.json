@@ -1,86 +1,180 @@
 {
-    "philadelphia_roll": {
-        "productId": "philadelphia_roll",
-        "price": 1200,
-        "currency": "USD",
-        "isActive": true
-    },
-    "california_roll": {
-        "productId": "california_roll",
-        "price": 1100,
-        "currency": "USD",
-        "isActive": true
-    },
-    "dragon_roll": {
-        "productId": "dragon_roll",
-        "price": 1400,
-        "currency": "USD",
-        "isActive": true
-    },
-    "spicy_tuna_roll": {
-        "productId": "spicy_tuna_roll",
-        "price": 950,
-        "currency": "USD",
-        "isActive": true
-    },
-    "tempura_shrimp_roll": {
-        "productId": "tempura_shrimp_roll",
-        "price": 1050,
-        "currency": "USD",
-        "isActive": true
-    },
-    "miso_soup": {
-        "productId": "miso_soup",
-        "price": 900,
-        "currency": "USD",
-        "isActive": true
-    },
-    "teriyaki_chicken": {
-        "productId": "teriyaki_chicken",
-        "price": 1350,
-        "currency": "USD",
-        "isActive": true
-    },
-    "beef_udon": {
-        "productId": "beef_udon",
-        "price": 1550,
-        "currency": "USD",
-        "isActive": true
-    },
-    "lunch_basic": {
-        "productId": "lunch_basic",
-        "price": 1400,
-        "currency": "USD",
-        "isActive": true
-    },
-    "lunch_premium": {
-        "productId": "lunch_premium",
-        "price": 2200,
-        "currency": "USD",
-        "isActive": true
-    },
-    "party_set_s": {
-        "productId": "party_set_s",
-        "price": 3500,
-        "currency": "USD",
-        "isActive": true
-    },
-    "party_set_m": {
-        "productId": "party_set_m",
-        "price": 5200,
-        "currency": "USD",
-        "isActive": true
-    },
-    "party_set_l": {
-        "productId": "party_set_l",
-        "price": 5900,
-        "currency": "USD",
-        "isActive": true
-    },
-    "veggie_set": {
-        "productId": "veggie_set",
-        "price": 3800,
-        "currency": "USD",
-        "isActive": true
-    }
+  "philadelphia_roll": {
+    "productId": "philadelphia_roll",
+    "price": 1200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "california_roll": {
+    "productId": "california_roll",
+    "price": 1100,
+    "currency": "USD",
+    "isActive": true
+  },
+  "dragon_roll": {
+    "productId": "dragon_roll",
+    "price": 1400,
+    "currency": "USD",
+    "isActive": true
+  },
+  "spicy_tuna_roll": {
+    "productId": "spicy_tuna_roll",
+    "price": 950,
+    "currency": "USD",
+    "isActive": true
+  },
+  "tempura_shrimp_roll": {
+    "productId": "tempura_shrimp_roll",
+    "price": 1050,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "salmon_avocado_roll": {
+    "productId": "salmon_avocado_roll",
+    "price": 1150,
+    "currency": "USD",
+    "isActive": true
+  },
+  "tuna_maki": {
+    "productId": "tuna_maki",
+    "price": 900,
+    "currency": "USD",
+    "isActive": true
+  },
+  "avocado_maki": {
+    "productId": "avocado_maki",
+    "price": 850,
+    "currency": "USD",
+    "isActive": true
+  },
+  "eel_cheese_roll": {
+    "productId": "eel_cheese_roll",
+    "price": 1450,
+    "currency": "USD",
+    "isActive": true
+  },
+  "rainbow_roll": {
+    "productId": "rainbow_roll",
+    "price": 1500,
+    "currency": "USD",
+    "isActive": true
+  },
+  "spicy_salmon_roll": {
+    "productId": "spicy_salmon_roll",
+    "price": 1200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "vegetable_roll": {
+    "productId": "vegetable_roll",
+    "price": 900,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "chicken_udon": {
+    "productId": "chicken_udon",
+    "price": 1450,
+    "currency": "USD",
+    "isActive": true
+  },
+  "salmon_teriyaki": {
+    "productId": "salmon_teriyaki",
+    "price": 1650,
+    "currency": "USD",
+    "isActive": true
+  },
+  "gyoza_pork": {
+    "productId": "gyoza_pork",
+    "price": 1100,
+    "currency": "USD",
+    "isActive": true
+  },
+  "gyoza_veggie": {
+    "productId": "gyoza_veggie",
+    "price": 1000,
+    "currency": "USD",
+    "isActive": true
+  },
+  "yakitori_chicken": {
+    "productId": "yakitori_chicken",
+    "price": 1200,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "lunch_teriyaki": {
+    "productId": "lunch_teriyaki",
+    "price": 1600,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_salmon": {
+    "productId": "lunch_salmon",
+    "price": 1750,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_udon": {
+    "productId": "lunch_udon",
+    "price": 1500,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_veggie": {
+    "productId": "lunch_veggie",
+    "price": 1450,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "salmon_set": {
+    "productId": "salmon_set",
+    "price": 4200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "tuna_set": {
+    "productId": "tuna_set",
+    "price": 4000,
+    "currency": "USD",
+    "isActive": true
+  },
+  "classic_set": {
+    "productId": "classic_set",
+    "price": 3800,
+    "currency": "USD",
+    "isActive": true
+  },
+  "spicy_set": {
+    "productId": "spicy_set",
+    "price": 3900,
+    "currency": "USD",
+    "isActive": true
+  },
+  "chef_set": {
+    "productId": "chef_set",
+    "price": 4600,
+    "currency": "USD",
+    "isActive": true
+  },
+  "mini_set": {
+    "productId": "mini_set",
+    "price": 2800,
+    "currency": "USD",
+    "isActive": true
+  },
+  "maxi_set": {
+    "productId": "maxi_set",
+    "price": 6200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "premium_set": {
+    "productId": "premium_set",
+    "price": 5500,
+    "currency": "USD",
+    "isActive": true
+  }
 }
