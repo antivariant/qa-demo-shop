@@ -176,5 +176,123 @@
     "price": 5500,
     "currency": "USD",
     "isActive": true
+  },
+
+  "beef_udon": {
+    "productId": "beef_udon",
+    "price": 1550,
+    "currency": "USD",
+    "isActive": true
+  },
+  "shrimp_tempura_hot": {
+    "productId": "shrimp_tempura_hot",
+    "price": 1450,
+    "currency": "USD",
+    "isActive": true
+  },
+  "vegetable_tempura": {
+    "productId": "vegetable_tempura",
+    "price": 1300,
+    "currency": "USD",
+    "isActive": true
+  },
+  "rice_chicken_bowl": {
+    "productId": "rice_chicken_bowl",
+    "price": 1200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "rice_beef_bowl": {
+    "productId": "rice_beef_bowl",
+    "price": 1350,
+    "currency": "USD",
+    "isActive": true
+  },
+  "miso_soup": {
+    "productId": "miso_soup",
+    "price": 900,
+    "currency": "USD",
+    "isActive": true
+  },
+  "teriyaki_chicken": {
+    "productId": "teriyaki_chicken",
+    "price": 1350,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "lunch_basic": {
+    "productId": "lunch_basic",
+    "price": 1400,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_premium": {
+    "productId": "lunch_premium",
+    "price": 2200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_combo_1": {
+    "productId": "lunch_combo_1",
+    "price": 1550,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_combo_2": {
+    "productId": "lunch_combo_2",
+    "price": 1650,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_combo_3": {
+    "productId": "lunch_combo_3",
+    "price": 1750,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_light": {
+    "productId": "lunch_light",
+    "price": 1350,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_spicy": {
+    "productId": "lunch_spicy",
+    "price": 1600,
+    "currency": "USD",
+    "isActive": true
+  },
+  "lunch_fish": {
+    "productId": "lunch_fish",
+    "price": 1700,
+    "currency": "USD",
+    "isActive": true
+  },
+
+  "party_set_s": {
+    "productId": "party_set_s",
+    "price": 3500,
+    "currency": "USD",
+    "isActive": true
+  },
+  "party_set_m": {
+    "productId": "party_set_m",
+    "price": 5200,
+    "currency": "USD",
+    "isActive": true
+  },
+  "party_set_l": {
+    "productId": "party_set_l",
+    "price": 5900,
+    "currency": "USD",
+    "isActive": true
+  },
+  "veggie_set": {
+    "productId": "veggie_set",
+    "price": 3800,
+    "currency": "USD",
+    "isActive": true
   }
+
 }
