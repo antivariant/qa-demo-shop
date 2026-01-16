@@ -30,10 +30,61 @@ export default function Store() {
 
     useEffect(() => {
         if (allProducts) {
-            setFeaturedProducts(allProducts.slice(0, 6));
-            setProducts(allProducts.slice(6));
+            const featuredCandidates = allProducts.filter(product => product.featured);
+            let featuredSelection: Product[] = [];
+
+            if (!selectedCategory || selectedCategory === 'all') {
+                const categoryOrder: string[] = [];
+                const featuredByCategory = new Map<string, Product[]>();
+
+                allProducts.forEach((product) => {
+                    if (!categoryOrder.includes(product.categoryId)) {
+                        categoryOrder.push(product.categoryId);
+                    }
+                    if (product.featured) {
+                        const existing = featuredByCategory.get(product.categoryId) ?? [];
+                        featuredByCategory.set(product.categoryId, [...existing, product]);
+                    }
+                });
+
+                const limitedCategories = categoryOrder.slice(0, 6);
+                const categoryCursor = new Map<string, number>();
+
+                for (const categoryId of limitedCategories) {
+                    categoryCursor.set(categoryId, 0);
+                }
+
+                let addedInCycle = true;
+                while (featuredSelection.length < 6 && limitedCategories.length > 0 && addedInCycle) {
+                    addedInCycle = false;
+                    for (const categoryId of limitedCategories) {
+                        const picks = featuredByCategory.get(categoryId) ?? [];
+                        const cursor = categoryCursor.get(categoryId) ?? 0;
+                        const candidate = picks[cursor];
+                        if (candidate && !featuredSelection.some((item) => item.id === candidate.id)) {
+                            featuredSelection.push(candidate);
+                            categoryCursor.set(categoryId, cursor + 1);
+                            addedInCycle = true;
+                        }
+                        if (featuredSelection.length >= 6) {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (featuredCandidates.length > 6) {
+                    console.error('Featured limit exceeded: showing first 6, sending the rest to the list.');
+                }
+                featuredSelection = featuredCandidates.slice(0, 6);
+            }
+
+            const featuredIds = new Set(featuredSelection.map(product => product.id));
+            const listProducts = allProducts.filter(product => !featuredIds.has(product.id));
+
+            setFeaturedProducts(featuredSelection);
+            setProducts(listProducts);
         }
-    }, [allProducts]);
+    }, [allProducts, selectedCategory]);
 
     // Simplified Scroll Logic:
     // We rely on native CSS behavior.
