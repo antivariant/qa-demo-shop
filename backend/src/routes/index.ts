@@ -4,6 +4,8 @@ import { CartController } from '../controllers/CartController';
 import { CheckoutController } from '../controllers/CheckoutController';
 import { OrderController } from '../controllers/OrderController';
 import { ImageController } from '../controllers/ImageController';
+import { SdetUserController } from '../controllers/SdetUserController';
+import { SdetAuthController } from '../controllers/SdetAuthController';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
@@ -13,6 +15,8 @@ const cartController = new CartController();
 const checkoutController = new CheckoutController();
 const orderController = new OrderController();
 const imageController = new ImageController();
+const sdetUserController = new SdetUserController();
+const sdetAuthController = new SdetAuthController();
 
 // Health check
 router.get('/health', (req, res) => {
@@ -37,5 +41,12 @@ router.get('/orders', authMiddleware, (req, res) => orderController.getOrders(re
 
 // Images
 router.get('/images/products/:filename', (req, res) => imageController.getImage(req, res));
+
+// SDET Auth
+router.post('/sdet/auth/register', (req, res) => sdetAuthController.register(req, res));
+
+// SDET User (Auth required)
+router.get('/sdet/user', authMiddleware, (req, res) => sdetUserController.getProfile(req as any, res));
+router.put('/sdet/user', authMiddleware, (req, res) => sdetUserController.upsertProfile(req as any, res));
 
 export default router;

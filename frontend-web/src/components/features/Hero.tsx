@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import styles from './Hero.module.css';
+import SdetPanel from './SdetPanel';
 
 export default function Hero() {
     return (
@@ -24,6 +25,10 @@ export default function Hero() {
                         priority
                     />
                 </motion.div>
+
+                <div className={styles.sdetPanelSlot}>
+                    <SdetPanel />
+                </div>
 
                 {/* Logo Unit - White branding */}
                 <motion.div
