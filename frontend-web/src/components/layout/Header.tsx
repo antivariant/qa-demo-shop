@@ -37,7 +37,6 @@ export default function Header() {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('HOME');
-    const [mounted, setMounted] = useState(false);
     const { data: categories = [] } = useGetCategoriesQuery();
 
     const handleLogout = () => {
@@ -64,8 +63,6 @@ export default function Header() {
     }, [categories]);
 
     useEffect(() => {
-        setMounted(true);
-
         const observerOptions = {
             root: null,
             rootMargin: '-10% 0px -70% 0px', // Trigger when section is in top part of viewport
@@ -115,8 +112,6 @@ export default function Header() {
             setActiveSection(item.name);
         }
     };
-
-    if (!mounted) return null; // Render nothing until mounted to prevent hydration issues
 
     return (
         <>

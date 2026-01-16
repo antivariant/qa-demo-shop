@@ -1,12 +1,11 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './ProductCard.module.css';
 import { Plus } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addToCart, updateQuantity } from '@/store/features/cart/cartSlice';
-import { useState, useEffect } from 'react';
-
 // Product imported from types
 import { Product } from '@/types';
 
@@ -19,11 +18,6 @@ interface ProductCardProps {
 export default function ProductCard({ product, variant = 'list', onClick }: ProductCardProps) {
     const dispatch = useAppDispatch();
     const cart = useAppSelector(state => state.cart.items);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const cartItem = cart.find(item => item.productId === product.id);
     const quantity = cartItem ? cartItem.quantity : 0;
@@ -45,8 +39,6 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
         dispatch(updateQuantity({ productId: product.id, quantity: Math.max(0, quantity - 1) }));
     };
 
-    if (!mounted) return null;
-
     return (
         <motion.div
             className={`${styles.card} ${variant === 'featured' ? styles.variant_featured : styles.variant_list}`}
@@ -55,7 +47,14 @@ export default function ProductCard({ product, variant = 'list', onClick }: Prod
             data-testid="product-card"
         >
             <div className={styles.imageWrapper}>
-                <img src={product.imageUrl} alt={product.name} className={styles.image} />
+                <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className={styles.image}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                />
             </div>
             <div className={styles.info}>
                 <div className={styles.textData}>

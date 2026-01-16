@@ -34,7 +34,13 @@ export default function FeaturedProduct() {
                     className={styles.imageContainer}
                 >
                     <div className={styles.imageWrapper}>
-                        <img src={MOCK_FEATURED.imageUrl} alt={MOCK_FEATURED.name} className={styles.image} />
+                        <Image
+                            src={MOCK_FEATURED.imageUrl}
+                            alt={MOCK_FEATURED.name}
+                            className={styles.image}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                        />
                     </div>
                     <div className={styles.blob}></div>
                 </motion.div>
