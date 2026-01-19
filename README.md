@@ -92,6 +92,13 @@ Each backend supports two isolated environments:
   * Uses Firestore Emulator
   * Supports local snapshots (save / restore)
 
+<<<<<<< HEAD
+=======
+* **Test**
+
+  * Cloud environment for manual testing, regression, and acceptance testing
+
+>>>>>>> origin/main
 * **Prod**
 
   * Production-like environment used for demos, CI/CD, and smoke tests
