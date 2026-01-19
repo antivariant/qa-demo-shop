@@ -19,37 +19,38 @@
     padding: 0.5rem 2rem;
     display: flex;
     align-items: center;
-    gap: 3rem;
+    gap: 2.4rem;
     pointer-events: auto;
     /* Re-enable clicks for the pill itself */
     max-width: 95vw;
+    width: min(920px, 95vw);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     box-sizing: border-box;
-}
-
-.logo {
-    font-size: 0.9rem;
-    font-weight: 800;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-    color: #fff;
-    white-space: nowrap;
+    overflow: hidden;
 }
 
 .nav {
     display: flex;
     align-items: center;
+    gap: 1.6rem;
+    flex: 1;
+}
+
+.navCore {
+    display: flex;
+    align-items: center;
     gap: 2rem;
 }
 
-.nav a {
+.nav a,
+.categoryItem {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
     text-decoration: none;
     cursor: pointer;
-    transition: var(--transition-smooth);
+    transition: color 0.2s ease;
     letter-spacing: 0.1em;
     white-space: nowrap;
 }
@@ -59,10 +60,40 @@
     color: #fff;
 }
 
+.categoryRail {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    overflow: hidden;
+    flex: 1;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.railReady {
+    opacity: 1;
+    visibility: visible;
+}
+
+.categoryItem {
+    background: transparent;
+    border: none;
+    padding: 0;
+    text-transform: uppercase;
+}
+
 .actions {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    transition: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.actionsReady {
+    opacity: 1;
+    visibility: visible;
 }
 
 .iconBtn {

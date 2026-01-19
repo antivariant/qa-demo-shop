@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
-import { LogOut, Send, User } from 'lucide-react';
+import { LogOut, Send, Settings } from 'lucide-react';
 import { sdetAuth } from '@/services/firebase';
 import { api } from '@/services/api';
 import { SdetUser } from '@/types';
@@ -57,15 +57,22 @@ export default function SdetPanel() {
     }, [sdetUser]);
 
     const bugScore = useMemo(() => {
-        const enabled = profile?.bugsEnabled ?? 5;
+        const enabled = 5;
         const found = profile?.bugsFound ?? 0;
+        const totalIssues = 30;
+        const totalFound = profile?.totalFound ?? 0;
         return {
-            enabled,
-            found,
             enabledLabel: String(enabled).padStart(2, '0'),
             foundLabel: String(found).padStart(2, '0'),
+            totalIssuesLabel: String(totalIssues).padStart(2, '0'),
+            totalFoundLabel: String(totalFound).padStart(2, '0'),
         };
-    }, [profile?.bugsEnabled, profile?.bugsFound]);
+    }, [profile?.bugsFound, profile?.totalFound]);
+
+    const isAuthed = Boolean(sdetUser);
+    const userLabel = sdetUser
+        ? (profile?.name?.trim() || profile?.displayName || 'User')
+        : 'Anonymous';
 
     const handleAuthClick = async () => {
         if (sdetUser) {
@@ -80,7 +87,14 @@ export default function SdetPanel() {
         if (sdetUser) {
             setSettingsOpen(true);
         } else {
-            setAuthMode('login');
+            setAuthMode('register');
+            setAuthOpen(true);
+        }
+    };
+
+    const handleUserAreaClick = () => {
+        if (!sdetUser) {
+            setAuthMode('register');
             setAuthOpen(true);
         }
     };
@@ -93,44 +107,63 @@ export default function SdetPanel() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, ease: 'easeOut', delay: 1.8 }}
             >
-                <div className={styles.columns}>
-                    <div className={styles.column}>
-                        <div className={styles.iconWrap}>
-                            <motion.button
-                                className={styles.iconButton}
+                <div className={styles.playerRow}>
+                    <span className={styles.playerName}>Sensei</span>
+                    <span className={styles.vsText}>vs</span>
+                    <span className={styles.playerNameGroup}>
+                        <span className={styles.playerName}>{userLabel}</span>
+                        {isAuthed && (
+                            <button
+                                className={styles.logoutButton}
                                 onClick={handleAuthClick}
-                                aria-label={sdetUser ? 'Logout SDET user' : 'Register or login'}
-                                title={sdetUser ? 'Logout' : 'Register / Login'}
-                                initial={{ opacity: 0, y: 36 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, ease: 'easeOut', delay: 2.4 }}
+                                type="button"
+                                aria-label="Logout SDET user"
+                                title="Logout"
                             >
-                                {sdetUser ? <LogOut size={18} /> : <User size={18} />}
-                            </motion.button>
+                                <LogOut size={14} />
+                            </button>
+                        )}
+                    </span>
+                </div>
+
+                <div className={styles.scoreboardFrame}>
+                    <div className={styles.scoreboardGrid}>
+                        <div className={styles.scoreColumn}>
+                            <button
+                                className={styles.actionButton}
+                                onClick={handleEnabledClick}
+                                type="button"
+                                aria-label="Open settings"
+                                title="Settings"
+                            >
+                                <Settings size={18} />
+                            </button>
+                            <div className={styles.scoreValue}>{bugScore.enabledLabel}</div>
+                            <div className={styles.scoreLabel}>ISSUES</div>
                         </div>
-                        <button className={styles.scoreButton} onClick={handleEnabledClick} type="button">
-                            <span className={styles.counter}>{bugScore.enabledLabel}</span>
-                            <span className={styles.counterLabel}>bugs</span>
-                        </button>
-                    </div>
-                    <div className={styles.column}>
-                        <div className={styles.iconWrap}>
-                            <motion.button
-                                className={styles.iconButton}
-                                onClick={() => setBugReportOpen(true)}
+                        <div className={styles.scoreColumn} onClick={handleUserAreaClick}>
+                            <button
+                                className={styles.actionButton}
+                                onClick={isAuthed ? () => setBugReportOpen(true) : handleUserAreaClick}
+                                type="button"
                                 aria-label="Send bug report"
                                 title="Send bug report"
-                                initial={{ opacity: 0, y: 36 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, ease: 'easeOut', delay: 2.4 }}
                             >
                                 <Send size={18} />
-                            </motion.button>
+                            </button>
+                            <div className={styles.scoreValue}>{isAuthed ? bugScore.foundLabel : '-'}</div>
+                            <div className={styles.scoreLabel}>FOUND</div>
+                            {!isAuthed && (
+                                <button className={styles.authOverlay} type="button" onClick={handleUserAreaClick}>
+                                    REGISTER TO TRACK SCORE
+                                </button>
+                            )}
                         </div>
-                        <button className={styles.scoreButton} onClick={() => setBugReportOpen(true)} type="button">
-                            <span className={styles.counter}>{bugScore.foundLabel}</span>
-                            <span className={styles.counterLabel}>found</span>
-                        </button>
+                    </div>
+                    <div className={styles.totalRow}>
+                        <span className={styles.totalValue}>{bugScore.totalIssuesLabel}</span>
+                        <span className={styles.totalLabel}>TOTAL</span>
+                        <span className={styles.totalValue}>{isAuthed ? bugScore.totalFoundLabel : '-'}</span>
                     </div>
                 </div>
                 {profileError && <p className={styles.errorText}>{profileError}</p>}

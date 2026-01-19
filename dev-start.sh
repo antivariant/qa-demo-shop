@@ -3,6 +3,27 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+ensure_java() {
+  if command -v java >/dev/null 2>&1; then
+    if java -version >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+
+  local java_home
+  java_home="$(/usr/libexec/java_home 2>/dev/null || true)"
+  if [[ -n "${java_home}" && -x "${java_home}/bin/java" ]]; then
+    export JAVA_HOME="${java_home}"
+    export PATH="${JAVA_HOME}/bin:${PATH}"
+    if java -version >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+
+  echo "Java is required for Firebase emulators. Install JDK or fix your JAVA_HOME."
+  exit 1
+}
+
 stop_port() {
   local port="$1"
   local pids
@@ -61,6 +82,7 @@ stop_port 4000
 stop_port 4100
 
 echo "Starting Firebase emulators..."
+ensure_java
 (
   cd "${ROOT_DIR}/backend-sandbox"
   nohup firebase emulators:start > /tmp/firebase-sandbox.log 2>&1 &
@@ -88,6 +110,12 @@ if ! wait_for_port 8180 40 0.5; then
   tail -n 50 /tmp/firebase-sdet.log || true
   exit 1
 fi
+if ! wait_for_port 9199 40 0.5; then
+  echo "Auth emulator (sdet) failed to start on 9199."
+  echo "---- /tmp/firebase-sdet.log (last 50 lines) ----"
+  tail -n 50 /tmp/firebase-sdet.log || true
+  exit 1
+fi
 
 echo "Seeding sandbox data..."
 (
@@ -96,7 +124,10 @@ echo "Seeding sandbox data..."
 )
 
 echo "Ensuring sandbox test user..."
-ensure_test_user "test.user@example.com" "123456" "localhost:9099"
+ensure_test_user "user.sandbox@example.com" "123456" "localhost:9099"
+
+echo "Ensuring sdet test user..."
+ensure_test_user "user.sdet@example.com" "123456" "localhost:9199"
 
 echo "Starting backends..."
 (

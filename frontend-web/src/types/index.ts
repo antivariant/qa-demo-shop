@@ -44,6 +44,7 @@ export interface SdetUser {
     name: string;
     bugsEnabled: number;
     bugsFound: number;
+    totalFound: number;
     createdAt: string;
     updatedAt: string;
 }

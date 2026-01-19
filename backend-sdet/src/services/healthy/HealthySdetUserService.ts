@@ -24,6 +24,7 @@ export class HealthySdetUserService implements ISdetUserService {
             name: payload.name?.trim() || '',
             bugsEnabled: 5,
             bugsFound: 0,
+            totalFound: 0,
             createdAt: now,
             updatedAt: now,
         };
