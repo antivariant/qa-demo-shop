@@ -36,9 +36,6 @@ export default function Header() {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
-    // UI State
-    const selectedCategory = useAppSelector(state => state.ui.selectedCategory);
-
     // Cart State
     const cartItems = useAppSelector(state => state.cart.items);
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -176,7 +173,6 @@ export default function Header() {
                     rootHeight: root.clientHeight,
                 };
             }
-            const doc = document.documentElement;
             return {
                 root: null,
                 scrollTop: window.scrollY,

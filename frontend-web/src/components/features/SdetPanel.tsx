@@ -25,6 +25,14 @@ export default function SdetPanel() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(sdetAuth, (user) => {
             setSdetUser(user);
+            if (!user) {
+                setProfile(null);
+                setProfileLoading(false);
+                setProfileError('');
+            } else {
+                setProfileLoading(true);
+                setProfileError('');
+            }
         });
         return () => unsubscribe();
     }, []);
@@ -32,12 +40,9 @@ export default function SdetPanel() {
     useEffect(() => {
         let mounted = true;
         if (!sdetUser) {
-            setProfile(null);
             return;
         }
 
-        setProfileLoading(true);
-        setProfileError('');
         api.getSdetUser()
             .then((data) => {
                 if (mounted) setProfile(data);
