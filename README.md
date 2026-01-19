@@ -1,6 +1,9 @@
 ## Backend Overview
 
-This repository contains the backend implementation for a **demo e-commerce platform**, designed primarily for **QA / SDET training, testing demonstrations, and architectural experiments**.
+This repository contains two backend services for a **demo e-commerce platform**, designed primarily for **QA / SDET training, testing demonstrations, and architectural experiments**.
+
+- **backend-sandbox**: Store backend with catalog, cart, checkout, and orders.
+- **backend-sdet**: SDET user backend with personalized settings and bug counters.
 
 The backend is intentionally built as a **clean, extensible skeleton**, serving as a *healthy baseline* that can later be extended with **intentional functional and security defects** without changing API contracts.
 
@@ -8,8 +11,8 @@ The backend is intentionally built as a **clean, extensible skeleton**, serving 
 
 ## Key Characteristics
 
-* **API-first backend**
-  A single REST API used by:
+* **API-first backends**
+  Two REST APIs used by:
 
   * Web application
   * Mobile application
@@ -82,16 +85,12 @@ The backend is intentionally built as a **clean, extensible skeleton**, serving 
 
 ## Environments
 
-The backend supports three isolated environments:
+Each backend supports two isolated environments:
 
 * **Dev**
 
   * Uses Firestore Emulator
   * Supports local snapshots (save / restore)
-
-* **Test**
-
-  * Cloud environment for manual testing, regression, and acceptance testing
 
 * **Prod**
 
@@ -101,12 +100,10 @@ The backend supports three isolated environments:
 
 ## Data Management
 
-Dedicated scripts are provided for:
+Dedicated scripts are provided for the **backend-sandbox** service:
 
 * **Base seeding** (destructive reset of reference data)
 * **Reference data synchronization**
-
-  * Prod → Test
   * Prod → Dev
 * **Emulator snapshots**
 

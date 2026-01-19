@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "backend-sandbox",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,6 @@
     "dev": "ENV_FILE=.env.dev ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "seed:dev": "ENV_FILE=.env.dev npx ts-node scripts/db/base-seed.ts",
-    "db:sync:test": "SOURCE_PROJECT_ID=qademo-94dc0 TARGET_PROJECT_ID=qademo-test ENV_FILE=.env.test npx ts-node scripts/db/sync-reference.ts",
     "db:sync:dev": "SOURCE_PROJECT_ID=qademo-94dc0 TARGET_PROJECT_ID=demo-qa-shop ENV_FILE=.env.dev npx ts-node scripts/db/sync-reference.ts",
     "db:seed:base": "npx ts-node scripts/db/base-seed.ts",
     "db:snapshot:save": "firebase emulators:export --force ./scripts/db/snapshots/dev",

@@ -1,4 +1,4 @@
-import { ICatalogService, ICartService, IDiscountService, IPaymentService, ICheckoutService, IOrderService, IPricelistService, IImageService, ISdetUserService } from '../services/interfaces';
+import { ICatalogService, ICartService, IDiscountService, IPaymentService, ICheckoutService, IOrderService, IPricelistService, IImageService } from '../services/interfaces';
 import { HealthyCatalogService } from '../services/healthy/HealthyCatalogService';
 import { HealthyDiscountService } from '../services/healthy/HealthyDiscountService';
 import { HealthyCartService } from '../services/healthy/HealthyCartService';
@@ -7,7 +7,6 @@ import { HealthyCheckoutService } from '../services/healthy/HealthyCheckoutServi
 import { HealthyOrderService } from '../services/healthy/HealthyOrderService';
 import { HealthyPricelistService } from '../services/healthy/HealthyPricelistService';
 import { HealthyImageService } from '../services/healthy/HealthyImageService';
-import { HealthySdetUserService } from '../services/healthy/HealthySdetUserService';
 
 export class ServiceResolver {
     private static catalogService: ICatalogService;
@@ -18,7 +17,6 @@ export class ServiceResolver {
     private static orderService: IOrderService;
     private static pricelistService: IPricelistService;
     private static imageService: IImageService;
-    private static sdetUserService: ISdetUserService;
 
     static getCatalogService(): ICatalogService {
         if (!this.catalogService) {
@@ -83,10 +81,4 @@ export class ServiceResolver {
         return this.imageService;
     }
 
-    static getSdetUserService(): ISdetUserService {
-        if (!this.sdetUserService) {
-            this.sdetUserService = new HealthySdetUserService();
-        }
-        return this.sdetUserService;
-    }
 }

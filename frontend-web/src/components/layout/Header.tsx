@@ -11,7 +11,7 @@ import { useMemo, useState, useEffect } from 'react';
 import CartDrawer from '@/components/features/CartDrawer';
 import UserMenu from './UserMenu';
 import CheckoutModal from '@/components/features/CheckoutModal';
-import { auth } from '@/services/firebase';
+import { shopAuth } from '@/services/firebase';
 import CartMergeModal from '@/components/features/CartMergeModal';
 import { useGetCategoriesQuery } from '@/services/productsApi';
 import { Category } from '@/types';
@@ -31,7 +31,7 @@ export default function Header() {
 
     // Auth State
     const user = useAppSelector(state => state.auth.user);
-    const isLoggedIn = Boolean(user || auth.currentUser);
+    const isLoggedIn = Boolean(user || shopAuth.currentUser);
 
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

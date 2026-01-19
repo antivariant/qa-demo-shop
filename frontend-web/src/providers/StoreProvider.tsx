@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'; // Added useEffect
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/services/firebase';
+import { shopAuth } from '@/services/firebase';
 import { setUser } from '@/store/features/auth/authSlice';
 import { fetchCart, setCartItems, setMergePrompt } from '@/store/features/cart/cartSlice';
 import { api } from '@/services/api';
@@ -22,7 +22,7 @@ export default function StoreProvider({
         if (!initialized.current) {
             initialized.current = true;
 
-            const unsubscribe = onAuthStateChanged(auth, (user) => {
+            const unsubscribe = onAuthStateChanged(shopAuth, (user) => {
                 const anonymousItems = (store.getState().cart.items as CartItem[]).filter(
                     (item) => item.quantity > 0
                 );

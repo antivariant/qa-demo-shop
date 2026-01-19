@@ -1,21 +1,22 @@
-import { auth } from './firebase';
+import { shopAuth, sdetAuth } from './firebase';
 import { getIdToken, User } from 'firebase/auth';
 import { Product, Category, Cart, CheckoutResponse, SdetUser } from '@/types';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
+const SHOP_BASE_URL = process.env.NEXT_PUBLIC_SHOP_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
+const SDET_BASE_URL = process.env.NEXT_PUBLIC_SDET_API_BASE_URL || 'http://localhost:3100/api';
 
 /**
  * Helper to get the current user, waiting for auth to initialize if necessary.
  * This is more robust as it handles the initial Firebase load state.
  */
-function waitForAuth(): Promise<User | null> {
+function waitForAuth(authInstance: typeof shopAuth): Promise<User | null> {
     return new Promise((resolve) => {
         // If already have a user, resolve immediately
-        if (auth.currentUser) {
-            return resolve(auth.currentUser);
+        if (authInstance.currentUser) {
+            return resolve(authInstance.currentUser);
         }
 
-        const unsubscribe = auth.onAuthStateChanged((user) => {
+        const unsubscribe = authInstance.onAuthStateChanged((user) => {
             unsubscribe();
             resolve(user);
         });
@@ -23,18 +24,18 @@ function waitForAuth(): Promise<User | null> {
         // Safety timeout - don't hang requests forever
         setTimeout(() => {
             unsubscribe();
-            resolve(auth.currentUser);
+            resolve(authInstance.currentUser);
         }, 3000);
     });
 }
 
-async function getHeaders(options?: { requireAuth?: boolean }) {
+async function getHeaders(authInstance: typeof shopAuth, options?: { requireAuth?: boolean }) {
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
     };
 
     try {
-        const user = await waitForAuth();
+        const user = await waitForAuth(authInstance);
         if (!user && options?.requireAuth) {
             throw new Error('Not authenticated');
         }
@@ -55,14 +56,14 @@ async function getHeaders(options?: { requireAuth?: boolean }) {
 export const api = {
     // Categories
     getCategories: async (): Promise<Category[]> => {
-        const res = await fetch(`${BASE_URL}/categories`);
+        const res = await fetch(`${SHOP_BASE_URL}/categories`);
         if (!res.ok) throw new Error('Failed to fetch categories');
         return res.json();
     },
 
     // Products
     getProducts: async (categoryId?: string): Promise<Product[]> => {
-        const url = new URL(`${BASE_URL}/products`);
+        const url = new URL(`${SHOP_BASE_URL}/products`);
         if (categoryId) url.searchParams.append('category', categoryId);
 
         const res = await fetch(url.toString());
@@ -71,24 +72,24 @@ export const api = {
     },
 
     getProduct: async (id: string): Promise<Product> => {
-        const res = await fetch(`${BASE_URL}/products/${id}`);
+        const res = await fetch(`${SHOP_BASE_URL}/products/${id}`);
         if (!res.ok) throw new Error('Failed to fetch product');
         return res.json();
     },
 
     // Cart
     getCart: async (): Promise<Cart> => {
-        const res = await fetch(`${BASE_URL}/cart`, {
-            headers: await getHeaders(),
+        const res = await fetch(`${SHOP_BASE_URL}/cart`, {
+            headers: await getHeaders(shopAuth),
         });
         if (!res.ok) throw new Error('Failed to fetch cart');
         return res.json();
     },
 
     addToCart: async (productId: string, quantity: number): Promise<Cart> => {
-        const res = await fetch(`${BASE_URL}/cart/items`, {
+        const res = await fetch(`${SHOP_BASE_URL}/cart/items`, {
             method: 'POST',
-            headers: await getHeaders(),
+            headers: await getHeaders(shopAuth),
             body: JSON.stringify({ productId, quantity }),
         });
         if (!res.ok) throw new Error('Failed to add to cart');
@@ -96,9 +97,9 @@ export const api = {
     },
 
     updateCartItem: async (itemId: string, quantity: number): Promise<Cart> => {
-        const res = await fetch(`${BASE_URL}/cart/items/${itemId}`, {
+        const res = await fetch(`${SHOP_BASE_URL}/cart/items/${itemId}`, {
             method: 'PATCH',
-            headers: await getHeaders(),
+            headers: await getHeaders(shopAuth),
             body: JSON.stringify({ quantity }),
         });
         if (!res.ok) throw new Error('Failed to update cart');
@@ -106,26 +107,26 @@ export const api = {
     },
 
     removeCartItem: async (itemId: string): Promise<Cart> => {
-        const res = await fetch(`${BASE_URL}/cart/items/${itemId}`, {
+        const res = await fetch(`${SHOP_BASE_URL}/cart/items/${itemId}`, {
             method: 'DELETE',
-            headers: await getHeaders(),
+            headers: await getHeaders(shopAuth),
         });
         if (!res.ok) throw new Error('Failed to remove from cart');
         return res.json();
     },
     clearCart: async (): Promise<void> => {
-        const res = await fetch(`${BASE_URL}/cart`, {
+        const res = await fetch(`${SHOP_BASE_URL}/cart`, {
             method: 'DELETE',
-            headers: await getHeaders({ requireAuth: true }),
+            headers: await getHeaders(shopAuth, { requireAuth: true }),
         });
         if (!res.ok) throw new Error('Failed to clear cart');
     },
 
     // Checkout
     checkout: async (payload: { paymentMethod: 'card' | 'cash'; cardNumber?: string }): Promise<CheckoutResponse> => {
-        const res = await fetch(`${BASE_URL}/checkout`, {
+        const res = await fetch(`${SHOP_BASE_URL}/checkout`, {
             method: 'POST',
-            headers: await getHeaders({ requireAuth: true }),
+            headers: await getHeaders(shopAuth, { requireAuth: true }),
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Failed to checkout');
@@ -133,8 +134,8 @@ export const api = {
     },
 
     getOrders: async (): Promise<unknown[]> => {
-        const res = await fetch(`${BASE_URL}/orders`, {
-            headers: await getHeaders(),
+        const res = await fetch(`${SHOP_BASE_URL}/orders`, {
+            headers: await getHeaders(shopAuth),
         });
         if (!res.ok) throw new Error('Failed to fetch orders');
         return res.json();
@@ -142,17 +143,17 @@ export const api = {
 
     // SDET User
     getSdetUser: async (): Promise<SdetUser> => {
-        const res = await fetch(`${BASE_URL}/sdet/user`, {
-            headers: await getHeaders({ requireAuth: true }),
+        const res = await fetch(`${SDET_BASE_URL}/sdet/user`, {
+            headers: await getHeaders(sdetAuth, { requireAuth: true }),
         });
         if (!res.ok) throw new Error('Failed to fetch SDET user profile');
         return res.json();
     },
 
     updateSdetUser: async (payload: { name?: string }): Promise<SdetUser> => {
-        const res = await fetch(`${BASE_URL}/sdet/user`, {
+        const res = await fetch(`${SDET_BASE_URL}/sdet/user`, {
             method: 'PUT',
-            headers: await getHeaders({ requireAuth: true }),
+            headers: await getHeaders(sdetAuth, { requireAuth: true }),
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Failed to update SDET user profile');
@@ -160,9 +161,9 @@ export const api = {
     },
 
     registerSdetUser: async (payload: { email: string; password: string; name?: string }): Promise<SdetUser> => {
-        const res = await fetch(`${BASE_URL}/sdet/auth/register`, {
+        const res = await fetch(`${SDET_BASE_URL}/sdet/auth/register`, {
             method: 'POST',
-            headers: await getHeaders(),
+            headers: await getHeaders(sdetAuth),
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Failed to register SDET user');
