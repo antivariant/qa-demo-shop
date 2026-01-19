@@ -139,7 +139,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 backend/secrets/**
+backend-sandbox/secrets/**
+backend-sdet/secrets/**
 
 frontend-web/playwright-report/*
 frontend-web/test-results/*
-
