@@ -2,20 +2,17 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
 import { LogOut, Send, User } from 'lucide-react';
-import { auth } from '@/services/firebase';
+import { sdetAuth } from '@/services/firebase';
 import { api } from '@/services/api';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { SdetUser } from '@/types';
-import { logoutUser } from '@/store/features/auth/authSlice';
 import styles from './SdetPanel.module.css';
 
 type AuthMode = 'login' | 'register';
 
 export default function SdetPanel() {
-    const dispatch = useAppDispatch();
-    const authState = useAppSelector((state) => state.auth);
+    const [sdetUser, setSdetUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<SdetUser | null>(null);
     const [profileLoading, setProfileLoading] = useState(false);
     const [profileError, setProfileError] = useState('');
@@ -26,8 +23,15 @@ export default function SdetPanel() {
     const [authMode, setAuthMode] = useState<AuthMode>('login');
 
     useEffect(() => {
+        const unsubscribe = onAuthStateChanged(sdetAuth, (user) => {
+            setSdetUser(user);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
         let mounted = true;
-        if (!authState.isAuthenticated) {
+        if (!sdetUser) {
             setProfile(null);
             return;
         }
@@ -50,7 +54,7 @@ export default function SdetPanel() {
         return () => {
             mounted = false;
         };
-    }, [authState.isAuthenticated]);
+    }, [sdetUser]);
 
     const bugScore = useMemo(() => {
         const enabled = profile?.bugsEnabled ?? 5;
@@ -64,8 +68,8 @@ export default function SdetPanel() {
     }, [profile?.bugsEnabled, profile?.bugsFound]);
 
     const handleAuthClick = async () => {
-        if (authState.isAuthenticated) {
-            await dispatch(logoutUser());
+        if (sdetUser) {
+            await signOut(sdetAuth);
             return;
         }
         setAuthMode('login');
@@ -73,7 +77,7 @@ export default function SdetPanel() {
     };
 
     const handleEnabledClick = () => {
-        if (authState.isAuthenticated) {
+        if (sdetUser) {
             setSettingsOpen(true);
         } else {
             setAuthMode('login');
@@ -95,13 +99,13 @@ export default function SdetPanel() {
                             <motion.button
                                 className={styles.iconButton}
                                 onClick={handleAuthClick}
-                                aria-label={authState.isAuthenticated ? 'Logout SDET user' : 'Register or login'}
-                                title={authState.isAuthenticated ? 'Logout' : 'Register / Login'}
+                                aria-label={sdetUser ? 'Logout SDET user' : 'Register or login'}
+                                title={sdetUser ? 'Logout' : 'Register / Login'}
                                 initial={{ opacity: 0, y: 36 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, ease: 'easeOut', delay: 2.4 }}
                             >
-                                {authState.isAuthenticated ? <LogOut size={18} /> : <User size={18} />}
+                                {sdetUser ? <LogOut size={18} /> : <User size={18} />}
                             </motion.button>
                         </div>
                         <button className={styles.scoreButton} onClick={handleEnabledClick} type="button">
@@ -130,7 +134,7 @@ export default function SdetPanel() {
                     </div>
                 </div>
                 {profileError && <p className={styles.errorText}>{profileError}</p>}
-                {profileLoading && authState.isAuthenticated && (
+                {profileLoading && sdetUser && (
                     <p className={styles.helperText}>Loading SDET profile...</p>
                 )}
             </motion.div>
@@ -200,11 +204,11 @@ function AuthModal({
                     password,
                     name: name.trim() || undefined,
                 });
-                await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(sdetAuth, email, password);
                 onSuccess(registered);
                 return;
             } else {
-                await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(sdetAuth, email, password);
             }
 
             const profile = await api.getSdetUser();

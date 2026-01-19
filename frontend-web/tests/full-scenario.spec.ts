@@ -3,6 +3,31 @@ import { test, expect } from '@playwright/test';
 test.describe('Full Shop Scenario', () => {
     test.setTimeout(180000);
 
+    const authHost = process.env.NEXT_PUBLIC_SHOP_FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
+    const testUser = {
+        email: 'test.user@example.com',
+        password: '123456',
+    };
+
+    test.beforeAll(async ({ request }) => {
+        const signUpUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key`;
+        const signUpRes = await request.post(signUpUrl, {
+            data: {
+                email: testUser.email,
+                password: testUser.password,
+                returnSecureToken: true,
+            },
+        });
+
+        if (!signUpRes.ok()) {
+            const payload = await signUpRes.json().catch(() => null);
+            const message = payload?.error?.message;
+            if (message !== 'EMAIL_EXISTS') {
+                throw new Error(`Failed to prepare test user: ${message || signUpRes.status()}`);
+            }
+        }
+    });
+
     test('should complete full user journey', async ({ page }) => {
         page.on('console', msg => {
             console.log(`PAGE ${msg.type().toUpperCase()}:`, msg.text());
@@ -37,8 +62,8 @@ test.describe('Full Shop Scenario', () => {
 
         // Login
         await page.goto('/login');
-        await page.fill('input[type="email"]', 'test.user@example.com');
-        await page.fill('input[type="password"]', '123456');
+        await page.fill('input[type="email"]', testUser.email);
+        await page.fill('input[type="password"]', testUser.password);
         await page.click('button:has-text("CONTINUE")');
         await expect(page).toHaveURL('/');
         await handleCartMergePrompt();
@@ -57,6 +82,7 @@ test.describe('Full Shop Scenario', () => {
         // Add Items
         const store = page.getByTestId('store-section');
         const products = store.getByTestId('product-card');
+        const listProducts = page.getByTestId('product-list-scroll').getByTestId('product-card');
         await expect(products.first()).toBeVisible({ timeout: 20000 });
 
         const setProductQty = async (index: number, TargetQty: number) => {
@@ -95,8 +121,9 @@ test.describe('Full Shop Scenario', () => {
         // Category
         await page.getByText('SETS').click();
         await page.waitForTimeout(2000);
-        await expect(products.first()).toBeVisible();
-        await products.first().getByTestId('add-btn').click();
+        await expect(listProducts.first()).toBeVisible();
+        await listProducts.first().scrollIntoViewIfNeeded();
+        await listProducts.first().getByTestId('add-btn').click({ force: true });
 
         await openCart();
         await expect(itemsInCart).toHaveCount(3);
@@ -111,8 +138,8 @@ test.describe('Full Shop Scenario', () => {
         await products.first().getByTestId('add-btn').click();
 
         await page.goto('/login');
-        await page.fill('input[type="email"]', 'test.user@example.com');
-        await page.fill('input[type="password"]', '123456');
+        await page.fill('input[type="email"]', testUser.email);
+        await page.fill('input[type="password"]', testUser.password);
         await page.click('button:has-text("CONTINUE")');
         await handleCartMergePrompt();
 

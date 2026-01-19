@@ -24,8 +24,8 @@ export const logoutUser = createAsyncThunk(
     'auth/logout',
     async (_, { dispatch }) => {
         const { signOut } = await import('firebase/auth');
-        const { auth } = await import('@/services/firebase');
-        await signOut(auth);
+        const { shopAuth } = await import('@/services/firebase');
+        await signOut(shopAuth);
         dispatch(authSlice.actions.logout()); // Call reducer to clear state
     }
 );
@@ -34,8 +34,8 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async ({ email, password }: { email: string; password: string }) => {
         const { signInWithEmailAndPassword } = await import('firebase/auth');
-        const { auth } = await import('@/services/firebase');
-        await signInWithEmailAndPassword(auth, email, password);
+        const { shopAuth } = await import('@/services/firebase');
+        await signInWithEmailAndPassword(shopAuth, email, password);
         // State update handled by listener in StoreProvider
     }
 );
