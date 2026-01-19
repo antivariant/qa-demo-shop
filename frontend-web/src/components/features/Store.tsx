@@ -68,9 +68,6 @@ export default function Store() {
                 }
             }
         } else {
-            if (featuredCandidates.length > 6) {
-                console.error('Featured limit exceeded: showing first 6, sending the rest to the list.');
-            }
             featuredSelection = featuredCandidates.slice(0, 6);
         }
 

@@ -29,10 +29,6 @@ test.describe('Full Shop Scenario', () => {
     });
 
     test('should complete full user journey', async ({ page }) => {
-        page.on('console', msg => {
-            console.log(`PAGE ${msg.type().toUpperCase()}:`, msg.text());
-        });
-
         const handleCartMergePrompt = async () => {
             const mergeModal = page.getByRole('dialog', { name: 'Choose which cart to keep' });
             if (await mergeModal.isVisible()) {

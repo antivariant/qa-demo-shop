@@ -101,7 +101,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                                     <h3 className={styles.sectionTitle}>ORDER SUMMARY</h3>
                                     <div className={styles.itemList}>
                                         {cart.filter(i => i.quantity > 0).map(item => (
-                                            <div key={item.id} className={styles.item}>
+                                            <div key={item.id || item.productId} className={styles.item}>
                                                 <span>{item.name} x {item.quantity}</span>
                                                 <span className={styles.price}>
                                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency || 'USD' }).format((item.price * item.quantity) / 100)}
