@@ -4,6 +4,7 @@ import { CartController } from '../controllers/CartController';
 import { CheckoutController } from '../controllers/CheckoutController';
 import { OrderController } from '../controllers/OrderController';
 import { ImageController } from '../controllers/ImageController';
+import { AuthController } from '../controllers/AuthController';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
@@ -13,6 +14,7 @@ const cartController = new CartController();
 const checkoutController = new CheckoutController();
 const orderController = new OrderController();
 const imageController = new ImageController();
+const authController = new AuthController();
 
 // Health check
 router.get('/health', (req, res) => {
@@ -37,5 +39,8 @@ router.get('/orders', authMiddleware, (req, res) => orderController.getOrders(re
 
 // Images
 router.get('/images/products/:filename', (req, res) => imageController.getImage(req, res));
+
+// Auth
+router.post('/auth/register', (req, res) => authController.register(req, res));
 
 export default router;

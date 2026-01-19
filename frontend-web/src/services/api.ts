@@ -169,4 +169,14 @@ export const api = {
         if (!res.ok) throw new Error('Failed to register SDET user');
         return res.json();
     },
+
+    registerShopUser: async (payload: { email: string; password: string; name?: string }): Promise<{ uid: string; email: string | null; displayName: string | null }> => {
+        const res = await fetch(`${SHOP_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: await getHeaders(shopAuth),
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('Failed to register user');
+        return res.json();
+    },
 };

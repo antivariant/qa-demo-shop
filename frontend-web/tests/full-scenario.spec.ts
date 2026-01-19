@@ -3,30 +3,10 @@ import { test, expect } from '@playwright/test';
 test.describe('Full Shop Scenario', () => {
     test.setTimeout(180000);
 
-    const authHost = process.env.NEXT_PUBLIC_SHOP_FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
     const testUser = {
-        email: 'test.user@example.com',
+        email: 'user1.sandbox@example.com',
         password: '123456',
     };
-
-    test.beforeAll(async ({ request }) => {
-        const signUpUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key`;
-        const signUpRes = await request.post(signUpUrl, {
-            data: {
-                email: testUser.email,
-                password: testUser.password,
-                returnSecureToken: true,
-            },
-        });
-
-        if (!signUpRes.ok()) {
-            const payload = await signUpRes.json().catch(() => null);
-            const message = payload?.error?.message;
-            if (message !== 'EMAIL_EXISTS') {
-                throw new Error(`Failed to prepare test user: ${message || signUpRes.status()}`);
-            }
-        }
-    });
 
     test('should complete full user journey', async ({ page }) => {
         const handleCartMergePrompt = async () => {
@@ -55,6 +35,18 @@ test.describe('Full Shop Scenario', () => {
                 await page.goto('/');
             }
         }
+
+        // Register
+        await page.goto('/login');
+        await page.getByText('Sign up').click();
+
+        const registerModal = page.getByRole('dialog');
+        await registerModal.getByPlaceholder('chef@dojo.com').fill(testUser.email);
+        await registerModal.getByPlaceholder('••••••••').fill(testUser.password);
+        await registerModal.getByPlaceholder('Your display name').fill('Test User');
+        await registerModal.getByRole('button', { name: 'CREATE ACCOUNT' }).click();
+        await page.waitForURL('/', { timeout: 10000 }).catch(() => undefined);
+        await expect(registerModal).toBeHidden({ timeout: 10000 });
 
         // Login
         await page.goto('/login');

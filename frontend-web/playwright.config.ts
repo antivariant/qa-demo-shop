@@ -6,6 +6,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
     testDir: './tests',
+    globalSetup: './tests/global-setup.ts',
+    globalTeardown: './tests/global-teardown.ts',
 
     /* Run tests in files in parallel */
     fullyParallel: true,
@@ -42,13 +44,4 @@ export default defineConfig({
         },
     ],
 
-    /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'npm run dev -- -H 127.0.0.1',
-        url: 'http://localhost:3030',
-        reuseExistingServer: !process.env.CI,
-        stdout: 'ignore',
-        stderr: 'pipe',
-        timeout: 120 * 1000, // 2 minutes to start
-    },
 });
