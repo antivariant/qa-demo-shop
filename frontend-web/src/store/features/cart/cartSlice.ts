@@ -54,7 +54,7 @@ export const addToCart = createAsyncThunk<CartItem[], AddToCartPayload, { state:
     async ({ product, quantity }, { getState, rejectWithValue }) => {
         const state = getState();
         const user = state.auth.user;
-        const productId = 'id' in product ? product.id : product.productId;
+        const productId = 'productId' in product ? product.productId : product.id;
 
         if (user) {
             try {
@@ -79,12 +79,18 @@ export const addToCart = createAsyncThunk<CartItem[], AddToCartPayload, { state:
                         : item
                 );
             } else {
-                newItems = [...currentItems, {
+                const cartItem: CartItem = {
                     id: Math.random().toString(36).substr(2, 9),
                     productId,
-                    ...product,
+                    name: product.name,
+                    description: product.description,
+                    imageUrl: product.imageUrl,
+                    price: product.price,
                     currency: 'currency' in product ? product.currency : 'USD',
                     quantity
+                };
+                newItems = [...currentItems, {
+                    ...cartItem
                 }];
             }
 

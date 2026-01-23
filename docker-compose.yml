@@ -1,0 +1,31 @@
+services:
+  backend-sandbox:
+    image: antivariant/backend-sandbox:dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend-sandbox/.env.prod
+    networks:
+      - app-net
+
+  backend-sdet:
+    image: antivariant/backend-sdet:dev
+    ports:
+      - "3100:3100"
+    env_file:
+      - ./backend-sdet/.env.prod
+    networks:
+      - app-net
+
+  frontend-web:
+    image: antivariant/frontend-web:dev
+    ports:
+      - "3030:3030"
+    env_file:
+      - ./frontend-web/.env.local
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

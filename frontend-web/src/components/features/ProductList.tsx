@@ -6,21 +6,7 @@ import styles from './ProductList.module.css';
 import ProductModal from './ProductModal';
 import ProductCard from './ProductCard';
 import { api } from '@/services/api';
-
-interface Product {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    currency: string;
-    imageUrl: string;
-    categoryId: string;
-}
-
-interface Category {
-    id: string;
-    name: string;
-}
+import type { Category, Product } from '@/types';
 
 export default function ProductList() {
     const [categories, setCategories] = useState<Category[]>([]);
