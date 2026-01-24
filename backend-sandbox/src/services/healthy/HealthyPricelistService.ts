@@ -18,4 +18,20 @@ export class HealthyPricelistService implements IPricelistService {
         if (snapshot.empty) return null;
         return snapshot.docs[0].data().price as Money;
     }
+
+    async getActivePrices(productIds?: string[]): Promise<Map<string, Money>> {
+        const snapshot = await this.db.collection(this.pricelistCollection)
+            .where('isActive', '==', true)
+            .get();
+
+        const allowedIds = productIds ? new Set(productIds) : null;
+        const prices = new Map<string, Money>();
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            if (!data?.productId || !data?.price) continue;
+            if (allowedIds && !allowedIds.has(data.productId)) continue;
+            prices.set(data.productId, data.price as Money);
+        }
+        return prices;
+    }
 }

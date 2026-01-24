@@ -20,11 +20,14 @@ export class HealthyCatalogService implements ICatalogService {
         }
 
         const snapshot = await query.get();
+        const activePrices = await this.pricelistService.getActivePrices(
+            snapshot.docs.map((doc) => doc.id),
+        );
         const products: Product[] = [];
 
         for (const doc of snapshot.docs) {
             const productData = doc.data();
-            const price = await this.pricelistService.getActivePrice(doc.id);
+            const price = activePrices.get(doc.id) || null;
 
             if (price !== null) {
                 products.push({

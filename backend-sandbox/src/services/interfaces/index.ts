@@ -2,6 +2,7 @@ import { Product, Cart, Order, Money, PaymentMethod, Category } from '../../doma
 
 export interface IPricelistService {
     getActivePrice(productId: string): Promise<Money | null>;
+    getActivePrices(productIds?: string[]): Promise<Map<string, Money>>;
 }
 
 export interface ICatalogService {
