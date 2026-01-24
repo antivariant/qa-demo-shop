@@ -58,7 +58,8 @@ export default function About() {
 
                 <footer className={styles.footer}>
                     <div className={styles.footerLeft}>
-                        © 2026 Igor Gromov. Use it. Fork it. Build on it. Just give credit. (MIT + CC BY 4.0)
+                        © 2026 Igor Gromov. Use it. Fork it. Build on it. <br/>
+                        Just give credit. (MIT + CC BY 4.0)
                     </div>
                     <div className={styles.socials}>
                         <a href="#" aria-label="LinkedIn" title="LinkedIn"><Linkedin size={24} /></a>
@@ -66,7 +67,8 @@ export default function About() {
                         <a href="#" aria-label="GitHub" title="GitHub"><Github size={24} /></a>
                     </div>
                     <div className={styles.footerRight}>
-                        AI-assisted. Human-built. Codex, Antigravity, and hands-on engineering. 
+                        AI-assisted. Human-built. Codex, Antigravity, <br/> 
+                        and hands-on engineering.
                     </div>
                 </footer>
             </div>

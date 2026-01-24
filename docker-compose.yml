@@ -1,0 +1,51 @@
+services:
+  backend-sandbox:
+    image: antivariant/backend-sandbox:dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend-sandbox/.env.localprod
+    networks:
+      - app-net
+
+  backend-sdet:
+    image: antivariant/backend-sdet:dev
+    ports:
+      - "3100:3100"
+    env_file:
+      - ./backend-sdet/.env.localprod
+    networks:
+      - app-net
+
+  frontend-web:
+    image: antivariant/frontend-web:dev
+    ports:
+      - "3030:3030"
+    env_file:
+      - ./frontend-web/.env.localprod
+    environment:
+      - NEXT_PUBLIC_API_TARGET=docker
+    networks:
+      - app-net
+
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+    env_file:
+      - ./frontend-web/.env.localprod
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - backend-sandbox
+      - backend-sdet
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  nginx-cache:

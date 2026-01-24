@@ -151,7 +151,7 @@ fi
 echo "Starting frontend..."
 (
   cd "${ROOT_DIR}/frontend-web"
-  nohup sh -c 'npm run dev -- -H 127.0.0.1' > /tmp/frontend-web.log 2>&1 &
+  nohup sh -c 'set -a; source .env.dev; set +a; npm run dev -- -H 127.0.0.1' > /tmp/frontend-web.log 2>&1 &
 )
 
 if ! wait_for_port 3030 40 0.5; then

@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { ICatalogService, IPricelistService } from '../interfaces';
 import { Product, Category } from '../../domain/types';
+import { resolveImageUrl } from '../../config/env';
 
 export class HealthyCatalogService implements ICatalogService {
     constructor(private pricelistService: IPricelistService) { }
@@ -30,7 +31,7 @@ export class HealthyCatalogService implements ICatalogService {
                     id: doc.id,
                     name: productData.name,
                     description: productData.description,
-                    imageUrl: productData.imageUrl,
+                    imageUrl: resolveImageUrl(productData.imageUrl),
                     categoryId: productData.categoryId,
                     featured: Boolean(productData.featured),
                     price: price,
@@ -55,7 +56,7 @@ export class HealthyCatalogService implements ICatalogService {
             id: doc.id,
             name: productData.name,
             description: productData.description,
-            imageUrl: productData.imageUrl,
+            imageUrl: resolveImageUrl(productData.imageUrl),
             categoryId: productData.categoryId,
             featured: Boolean(productData.featured),
             price: price,

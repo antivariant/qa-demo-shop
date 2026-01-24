@@ -1,0 +1,35 @@
+{
+  "user_001": {
+    "uid": "user_001",
+    "email": "alex.qa@example.com",
+    "displayName": "Alex QA",
+    "name": "Alex",
+    "bugsEnabled": 5,
+    "bugsFound": 2,
+    "totalFound": 2,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  "user_002": {
+    "uid": "user_002",
+    "email": "maria.sdet@example.com",
+    "displayName": "Maria SDET",
+    "name": "Maria",
+    "bugsEnabled": 7,
+    "bugsFound": 4,
+    "totalFound": 4,
+    "createdAt": "2024-01-02T00:00:00.000Z",
+    "updatedAt": "2024-01-02T00:00:00.000Z"
+  },
+  "user_003": {
+    "uid": "user_003",
+    "email": "ivan.tester@example.com",
+    "displayName": "Ivan Tester",
+    "name": "Ivan",
+    "bugsEnabled": 3,
+    "bugsFound": 1,
+    "totalFound": 1,
+    "createdAt": "2024-01-03T00:00:00.000Z",
+    "updatedAt": "2024-01-03T00:00:00.000Z"
+  }
+}

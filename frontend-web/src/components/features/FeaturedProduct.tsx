@@ -6,14 +6,17 @@ import Image from 'next/image';
 
 import { useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/store/features/cart/cartSlice';
+import type { Product } from '@/types';
 
-const MOCK_FEATURED = {
+const MOCK_FEATURED: Product = {
     id: 'prod_001',
     name: 'Signature DOJO Roll',
     description: 'A masterpiece of taste featuring premium bluefin tuna, avocado, and our secret truffle-infused soy glaze. Hand-crafted daily by our master chefs.',
     price: 2499,
     currency: 'USD',
-    imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2070&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2070&auto=format&fit=crop',
+    categoryId: 'featured',
+    featured: true,
 };
 
 export default function FeaturedProduct() {

@@ -2,8 +2,36 @@ import { shopAuth, sdetAuth } from './firebase';
 import { getIdToken, User } from 'firebase/auth';
 import { Product, Category, Cart, CheckoutResponse, SdetUser } from '@/types';
 
-const SHOP_BASE_URL = process.env.NEXT_PUBLIC_SHOP_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
-const SDET_BASE_URL = process.env.NEXT_PUBLIC_SDET_API_BASE_URL || 'http://localhost:3100/api';
+const API_TARGET = process.env.NEXT_PUBLIC_API_TARGET || 'local';
+
+function pickByTarget(local?: string, docker?: string, prod?: string, fallback?: string) {
+    if (API_TARGET === 'prod') {
+        return prod || docker || local || fallback;
+    }
+    if (API_TARGET === 'docker') {
+        return docker || local || prod || fallback;
+    }
+    return local || docker || prod || fallback;
+}
+
+const SHOP_BASE_URL =
+    process.env.NEXT_PUBLIC_SHOP_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    pickByTarget(
+        process.env.NEXT_PUBLIC_SHOP_API_BASE_URL_LOCAL,
+        process.env.NEXT_PUBLIC_SHOP_API_BASE_URL_DOCKER,
+        process.env.NEXT_PUBLIC_SHOP_API_BASE_URL_PROD,
+        'http://localhost:3000/api',
+    );
+
+const SDET_BASE_URL =
+    process.env.NEXT_PUBLIC_SDET_API_BASE_URL ||
+    pickByTarget(
+        process.env.NEXT_PUBLIC_SDET_API_BASE_URL_LOCAL,
+        process.env.NEXT_PUBLIC_SDET_API_BASE_URL_DOCKER,
+        process.env.NEXT_PUBLIC_SDET_API_BASE_URL_PROD,
+        'http://localhost:3100/api',
+    );
 
 /**
  * Helper to get the current user, waiting for auth to initialize if necessary.
