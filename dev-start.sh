@@ -197,7 +197,11 @@ if ! wait_for_port 3100 40 0.5; then
 fi
 
 echo "Starting frontend..."
-run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev -- -H 127.0.0.1"
+if [[ "${DEV_START_MODE}" == "ci" ]]; then
+  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev"
+else
+  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev -- -H 127.0.0.1"
+fi
 
 if ! wait_for_port 3030 40 0.5; then
   echo "frontend-web failed to start on 3030."
