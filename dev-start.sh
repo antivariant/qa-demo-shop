@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEV_START_MODE="${DEV_START_MODE:-foreground}"
 DEV_START_LOG_DIR="${DEV_START_LOG_DIR:-/tmp/qa-demo-shop}"
+FIREBASE_SANDBOX_LOG="${DEV_START_LOG_DIR}/firebase-sandbox.log"
+FIREBASE_SDET_LOG="${DEV_START_LOG_DIR}/firebase-sdet.log"
 
 ensure_java() {
   if command -v java >/dev/null 2>&1; then
@@ -102,26 +104,34 @@ run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:st
 
 if ! wait_for_port 8080 40 0.5; then
   echo "Firestore emulator (sandbox) failed to start on 8080."
-  echo "---- /tmp/firebase-sandbox.log (last 50 lines) ----"
-  tail -n 50 /tmp/firebase-sandbox.log || true
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    echo "---- ${FIREBASE_SANDBOX_LOG} (last 50 lines) ----"
+    tail -n 50 "${FIREBASE_SANDBOX_LOG}" || true
+  fi
   exit 1
 fi
 if ! wait_for_port 9099 40 0.5; then
   echo "Auth emulator (sandbox) failed to start on 9099."
-  echo "---- /tmp/firebase-sandbox.log (last 50 lines) ----"
-  tail -n 50 /tmp/firebase-sandbox.log || true
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    echo "---- ${FIREBASE_SANDBOX_LOG} (last 50 lines) ----"
+    tail -n 50 "${FIREBASE_SANDBOX_LOG}" || true
+  fi
   exit 1
 fi
 if ! wait_for_port 8180 40 0.5; then
   echo "Firestore emulator (sdet) failed to start on 8180."
-  echo "---- /tmp/firebase-sdet.log (last 50 lines) ----"
-  tail -n 50 /tmp/firebase-sdet.log || true
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    echo "---- ${FIREBASE_SDET_LOG} (last 50 lines) ----"
+    tail -n 50 "${FIREBASE_SDET_LOG}" || true
+  fi
   exit 1
 fi
 if ! wait_for_port 9199 40 0.5; then
   echo "Auth emulator (sdet) failed to start on 9199."
-  echo "---- /tmp/firebase-sdet.log (last 50 lines) ----"
-  tail -n 50 /tmp/firebase-sdet.log || true
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    echo "---- ${FIREBASE_SDET_LOG} (last 50 lines) ----"
+    tail -n 50 "${FIREBASE_SDET_LOG}" || true
+  fi
   exit 1
 fi
 
