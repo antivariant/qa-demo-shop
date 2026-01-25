@@ -132,7 +132,6 @@ stop_port 4100
 echo "Starting Firebase emulators..."
 ensure_java
 run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && firebase emulators:start"
-run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
 
 if ! wait_for_port 8080 40 0.5; then
   echo "Firestore emulator (sandbox) failed to start on 8080."
@@ -150,6 +149,7 @@ if ! wait_for_port 9099 40 0.5; then
   fi
   exit 1
 fi
+run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
 if ! wait_for_port 8180 40 0.5; then
   echo "Firestore emulator (sdet) failed to start on 8180."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
