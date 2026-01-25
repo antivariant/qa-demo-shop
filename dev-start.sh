@@ -2,6 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEV_START_MODE="${DEV_START_MODE:-foreground}"
+DEV_START_LOG_DIR="${DEV_START_LOG_DIR:-/tmp/qa-demo-shop}"
 
 ensure_java() {
   if command -v java >/dev/null 2>&1; then
@@ -47,6 +49,18 @@ wait_for_port() {
   return 1
 }
 
+run_bg() {
+  local name="$1"
+  shift
+  local cmd="$*"
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    mkdir -p "${DEV_START_LOG_DIR}"
+    nohup bash -c "${cmd}" > "${DEV_START_LOG_DIR}/${name}.log" 2>&1 &
+  else
+    bash -c "${cmd}" &
+  fi
+}
+
 ensure_test_user() {
   local email="$1"
   local password="$2"
@@ -83,14 +97,8 @@ stop_port 4100
 
 echo "Starting Firebase emulators..."
 ensure_java
-(
-  cd "${ROOT_DIR}/backend-sandbox"
-  firebase emulators:start &
-)
-(
-  cd "${ROOT_DIR}/backend-sdet"
-  firebase emulators:start &
-)
+run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && firebase emulators:start"
+run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
 
 if ! wait_for_port 8080 40 0.5; then
   echo "Firestore emulator (sandbox) failed to start on 8080."
@@ -130,14 +138,8 @@ echo "Ensuring sdet test user..."
 ensure_test_user "user.sdet@example.com" "123456" "localhost:9199"
 
 echo "Starting backends..."
-(
-  cd "${ROOT_DIR}/backend-sandbox"
-  sh -c 'ENV_FILE=.env.dev npm run dev' &
-)
-(
-  cd "${ROOT_DIR}/backend-sdet"
-  sh -c 'ENV_FILE=.env.dev npm run dev' &
-)
+run_bg "backend-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && ENV_FILE=.env.dev npm run dev"
+run_bg "backend-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && ENV_FILE=.env.dev npm run dev"
 
 if ! wait_for_port 3000 40 0.5; then
   echo "backend-sandbox failed to start on 3000."
@@ -149,10 +151,7 @@ if ! wait_for_port 3100 40 0.5; then
 fi
 
 echo "Starting frontend..."
-(
-  cd "${ROOT_DIR}/frontend-web"
-  sh -c 'set -a; source .env.dev; set +a; npm run dev -- -H 127.0.0.1' &
-)
+run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev -- -H 127.0.0.1"
 
 if ! wait_for_port 3030 40 0.5; then
   echo "frontend-web failed to start on 3030."
@@ -160,4 +159,9 @@ if ! wait_for_port 3030 40 0.5; then
 fi
 
 echo "Dev stack is running. Press Ctrl+C to stop."
+if [[ "${DEV_START_MODE}" == "ci" ]]; then
+  echo "CI mode active. Logs: ${DEV_START_LOG_DIR}"
+  exit 0
+fi
+
 wait

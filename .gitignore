@@ -144,3 +144,6 @@ backend-sdet/secrets/**
 
 frontend-web/playwright-report/*
 frontend-web/test-results/*
+
+# Local-only CI/CD notes
+CICD.md

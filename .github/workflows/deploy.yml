@@ -1,0 +1,87 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Write frontend production env (optional)
+        env:
+          FRONTEND_ENV_PRODUCTION: ${{ secrets.FRONTEND_ENV_PRODUCTION }}
+        run: |
+          if [ -n "${FRONTEND_ENV_PRODUCTION}" ]; then
+            printf "%s" "${FRONTEND_ENV_PRODUCTION}" > frontend-web/.env.production
+          fi
+
+      - name: Build and push backend-sandbox
+        uses: docker/build-push-action@v6
+        with:
+          context: backend-sandbox
+          push: true
+          tags: |
+            antivariant/backend-sandbox:latest
+            antivariant/backend-sandbox:${{ github.sha }}
+
+      - name: Build and push backend-sdet
+        uses: docker/build-push-action@v6
+        with:
+          context: backend-sdet
+          push: true
+          tags: |
+            antivariant/backend-sdet:latest
+            antivariant/backend-sdet:${{ github.sha }}
+
+      - name: Build and push frontend-web
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend-web
+          push: true
+          build-args: |
+            ENV_FILE=.env.production
+          tags: |
+            antivariant/frontend-web:latest
+            antivariant/frontend-web:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: QACEDU_APP_PATH,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
+          script: |
+            set -euo pipefail
+            cd "${QACEDU_APP_PATH}"
+            docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_TOKEN}"
+            export BACKEND_SANDBOX_IMAGE_TAG="${IMAGE_TAG}"
+            export BACKEND_SDET_IMAGE_TAG="${IMAGE_TAG}"
+            export FRONTEND_WEB_IMAGE_TAG="${IMAGE_TAG}"
+            docker compose pull
+            docker compose up -d --remove-orphans
+        env:
+          QACEDU_APP_PATH: ${{ secrets.VPS_APP_PATH }}
+          IMAGE_TAG: ${{ github.sha }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
