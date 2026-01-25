@@ -133,7 +133,14 @@ echo "Starting Firebase emulators..."
 ensure_java
 run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && firebase emulators:start"
 
-if ! wait_for_port 8080 40 0.5; then
+emulator_retries=40
+emulator_delay=0.5
+if [[ "${DEV_START_MODE}" == "ci" ]]; then
+  emulator_retries=180
+  emulator_delay=0.5
+fi
+
+if ! wait_for_port 8080 "${emulator_retries}" "${emulator_delay}"; then
   echo "Firestore emulator (sandbox) failed to start on 8080."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${FIREBASE_SANDBOX_LOG} (last 50 lines) ----"
@@ -141,7 +148,7 @@ if ! wait_for_port 8080 40 0.5; then
   fi
   exit 1
 fi
-if ! wait_for_port 9099 40 0.5; then
+if ! wait_for_port 9099 "${emulator_retries}" "${emulator_delay}"; then
   echo "Auth emulator (sandbox) failed to start on 9099."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${FIREBASE_SANDBOX_LOG} (last 50 lines) ----"
@@ -150,7 +157,7 @@ if ! wait_for_port 9099 40 0.5; then
   exit 1
 fi
 run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
-if ! wait_for_port 8180 40 0.5; then
+if ! wait_for_port 8180 "${emulator_retries}" "${emulator_delay}"; then
   echo "Firestore emulator (sdet) failed to start on 8180."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${FIREBASE_SDET_LOG} (last 50 lines) ----"
@@ -162,7 +169,7 @@ if ! wait_for_port 8180 40 0.5; then
   fi
   exit 1
 fi
-if ! wait_for_port 9199 40 0.5; then
+if ! wait_for_port 9199 "${emulator_retries}" "${emulator_delay}"; then
   echo "Auth emulator (sdet) failed to start on 9199."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${FIREBASE_SDET_LOG} (last 50 lines) ----"
