@@ -31,6 +31,9 @@ ensure_java() {
 stop_port() {
   local port="$1"
   local pids
+  if ! command -v lsof >/dev/null 2>&1; then
+    return 0
+  fi
   pids="$(lsof -ti tcp:"${port}" 2>/dev/null || true)"
   if [[ -n "${pids}" ]]; then
     echo "Stopping processes on port ${port}: ${pids}"
@@ -38,12 +41,25 @@ stop_port() {
   fi
 }
 
+port_open() {
+  local port="$1"
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -ti tcp:"${port}" >/dev/null 2>&1
+    return $?
+  fi
+  if command -v nc >/dev/null 2>&1; then
+    nc -z 127.0.0.1 "${port}" >/dev/null 2>&1
+    return $?
+  fi
+  (echo >/dev/tcp/127.0.0.1/"${port}") >/dev/null 2>&1
+}
+
 wait_for_port() {
   local port="$1"
   local retries="${2:-30}"
   local delay="${3:-0.5}"
   for _ in $(seq 1 "${retries}"); do
-    if lsof -ti tcp:"${port}" >/dev/null 2>&1; then
+    if port_open "${port}"; then
       return 0
     fi
     sleep "${delay}"
