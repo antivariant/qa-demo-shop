@@ -25,9 +25,10 @@
   overflow-y: auto;
   /* Enable vertical scroll */
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 
   background-color: var(--foreground);
-  padding-top: 80px;
+  padding-top: 64px;
   padding-right: 0;
   padding-bottom: 0;
   padding-left: 0;

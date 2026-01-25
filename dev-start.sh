@@ -85,11 +85,11 @@ echo "Starting Firebase emulators..."
 ensure_java
 (
   cd "${ROOT_DIR}/backend-sandbox"
-  nohup firebase emulators:start > /tmp/firebase-sandbox.log 2>&1 &
+  firebase emulators:start &
 )
 (
   cd "${ROOT_DIR}/backend-sdet"
-  nohup firebase emulators:start > /tmp/firebase-sdet.log 2>&1 &
+  firebase emulators:start &
 )
 
 if ! wait_for_port 8080 40 0.5; then
@@ -132,11 +132,11 @@ ensure_test_user "user.sdet@example.com" "123456" "localhost:9199"
 echo "Starting backends..."
 (
   cd "${ROOT_DIR}/backend-sandbox"
-  nohup sh -c 'ENV_FILE=.env.dev npm run dev' > /tmp/backend-sandbox.log 2>&1 &
+  sh -c 'ENV_FILE=.env.dev npm run dev' &
 )
 (
   cd "${ROOT_DIR}/backend-sdet"
-  nohup sh -c 'ENV_FILE=.env.dev npm run dev' > /tmp/backend-sdet.log 2>&1 &
+  sh -c 'ENV_FILE=.env.dev npm run dev' &
 )
 
 if ! wait_for_port 3000 40 0.5; then
@@ -151,7 +151,7 @@ fi
 echo "Starting frontend..."
 (
   cd "${ROOT_DIR}/frontend-web"
-  nohup sh -c 'set -a; source .env.dev; set +a; npm run dev -- -H 127.0.0.1' > /tmp/frontend-web.log 2>&1 &
+  sh -c 'set -a; source .env.dev; set +a; npm run dev -- -H 127.0.0.1' &
 )
 
 if ! wait_for_port 3030 40 0.5; then
@@ -159,5 +159,5 @@ if ! wait_for_port 3030 40 0.5; then
   exit 1
 fi
 
-echo "Dev stack is running."
-echo "Logs: /tmp/firebase-sandbox.log /tmp/firebase-sdet.log /tmp/backend-sandbox.log /tmp/backend-sdet.log /tmp/frontend-web.log"
+echo "Dev stack is running. Press Ctrl+C to stop."
+wait
