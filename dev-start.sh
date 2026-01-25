@@ -201,6 +201,10 @@ run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.
 
 if ! wait_for_port 3030 40 0.5; then
   echo "frontend-web failed to start on 3030."
+  if [[ "${DEV_START_MODE}" == "ci" ]]; then
+    echo "---- ${DEV_START_LOG_DIR}/frontend-web.log (last 100 lines) ----"
+    tail -n 100 "${DEV_START_LOG_DIR}/frontend-web.log" || true
+  fi
   exit 1
 fi
 
