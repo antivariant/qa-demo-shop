@@ -123,6 +123,10 @@ if ! wait_for_port 8180 40 0.5; then
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${FIREBASE_SDET_LOG} (last 50 lines) ----"
     tail -n 50 "${FIREBASE_SDET_LOG}" || true
+    if [[ -f "${ROOT_DIR}/backend-sdet/firestore-debug.log" ]]; then
+      echo "---- backend-sdet/firestore-debug.log (last 50 lines) ----"
+      tail -n 50 "${ROOT_DIR}/backend-sdet/firestore-debug.log" || true
+    fi
   fi
   exit 1
 fi
