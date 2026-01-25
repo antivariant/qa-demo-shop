@@ -12,6 +12,7 @@
     gap: var(--grid-gutter);
     padding: var(--grid-margin) clamp(64px, 14vw, 280px);
     /* Side padding keeps featured cards from becoming too square on wide screens */
+    scroll-margin-top: clamp(96px, 14vh, 160px);
 
     overflow: hidden;
     background: #000;
