@@ -84,22 +84,38 @@ ensure_test_user() {
   local password="$2"
   local host="${3:-localhost:9099}"
   local url="http://${host}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key"
+  local retries=10
+  local delay=0.5
 
-  local response
-  response="$(curl -sS -X POST "${url}" \
-    -H "Content-Type: application/json" \
-    -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"returnSecureToken\":true}")"
+  for attempt in $(seq 1 "${retries}"); do
+    local response
+    response="$(curl -sS -X POST "${url}" \
+      -H "Content-Type: application/json" \
+      -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"returnSecureToken\":true}" || true)"
 
-  if echo "${response}" | grep -q '"error"'; then
-    if echo "${response}" | grep -q '"EMAIL_EXISTS"'; then
-      echo "Test user already exists: ${email}"
+    if echo "${response}" | grep -q '"error"'; then
+      if echo "${response}" | grep -q '"EMAIL_EXISTS"'; then
+        echo "Test user already exists: ${email}"
+        return 0
+      fi
+      if [[ "${attempt}" -lt "${retries}" ]]; then
+        sleep "${delay}"
+        continue
+      fi
+      echo "Failed to create test user: ${response}"
+      return 1
+    fi
+
+    if [[ -n "${response}" ]]; then
+      echo "Created test user: ${email}"
       return 0
     fi
-    echo "Failed to create test user: ${response}"
-    return 1
-  fi
 
-  echo "Created test user: ${email}"
+    sleep "${delay}"
+  done
+
+  echo "Failed to create test user: no response"
+  return 1
 }
 
 echo "Stopping existing dev services (if any)..."
