@@ -82,10 +82,11 @@ export class HealthyCartService implements ICartService {
             existingItem.quantity += quantity;
             existingItem.itemTotal = existingItem.quantity * existingItem.price;
         } else if (quantity > 0) {
-            const product = await this.catalogService.getProductById(productId);
+            const [product, price] = await Promise.all([
+                this.catalogService.getProductById(productId),
+                this.pricelistService.getActivePrice(productId),
+            ]);
             if (!product) throw new Error('Product not found');
-
-            const price = await this.pricelistService.getActivePrice(productId);
             if (price === null) throw new Error('Price not found for product');
 
             const newItem: CartItem = {

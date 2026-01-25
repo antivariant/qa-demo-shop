@@ -1,5 +1,5 @@
 .store {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 120px);
     /* Fit exactly in remaining space */
     width: 100%;
     max-width: 1400px;
@@ -12,6 +12,7 @@
     gap: var(--grid-gutter);
     padding: var(--grid-margin) clamp(64px, 14vw, 280px);
     /* Side padding keeps featured cards from becoming too square on wide screens */
+    scroll-margin-top: clamp(72px, 10vh, 120px);
 
     overflow: hidden;
     background: #000;
@@ -135,7 +136,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--grid-gutter);
     align-content: start;
-    padding-bottom: 100px;
+    padding-bottom: 0;
     /* Reduced from 20vh to avoiding hitting boundaries too hard */
 }
 
