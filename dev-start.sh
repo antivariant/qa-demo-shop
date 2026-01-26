@@ -54,6 +54,25 @@ port_open() {
   (echo >/dev/tcp/127.0.0.1/"${port}") >/dev/null 2>&1
 }
 
+wait_for_http() {
+  local url="$1"
+  local retries="${2:-30}"
+  local delay="${3:-0.5}"
+  for _ in $(seq 1 "${retries}"); do
+    if command -v curl >/dev/null 2>&1; then
+      if curl -fsS "${url}" >/dev/null 2>&1; then
+        return 0
+      fi
+    elif command -v wget >/dev/null 2>&1; then
+      if wget -qO- "${url}" >/dev/null 2>&1; then
+        return 0
+      fi
+    fi
+    sleep "${delay}"
+  done
+  return 1
+}
+
 wait_for_port() {
   local port="$1"
   local retries="${2:-30}"
@@ -210,7 +229,7 @@ else
   run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030 -H 127.0.0.1"
 fi
 
-if ! wait_for_port 3030 40 0.5; then
+if ! wait_for_http "http://localhost:3030" 60 0.5; then
   echo "frontend-web failed to start on 3030."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${DEV_START_LOG_DIR}/frontend-web.log (last 100 lines) ----"
