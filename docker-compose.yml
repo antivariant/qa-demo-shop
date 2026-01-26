@@ -4,7 +4,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ${BACKEND_SANDBOX_ENV_FILE:-./backend-sandbox/.env.prod}
+      - ${BACKEND_SANDBOX_ENV_FILE:-./backend-sandbox/.env.localprod}
     networks:
       - app-net
 
@@ -13,7 +13,7 @@ services:
     ports:
       - "3100:3100"
     env_file:
-      - ${BACKEND_SDET_ENV_FILE:-./backend-sdet/.env.prod}
+      - ${BACKEND_SDET_ENV_FILE:-./backend-sdet/.env.localprod}
     networks:
       - app-net
 
@@ -22,7 +22,7 @@ services:
     ports:
       - "3030:3030"
     env_file:
-      - ${FRONTEND_WEB_ENV_FILE:-./frontend-web/.env.production}
+      - ${FRONTEND_WEB_ENV_FILE:-./frontend-web/.env.localprod}
     environment:
       - NEXT_PUBLIC_API_TARGET=docker
     networks:
@@ -33,7 +33,7 @@ services:
     ports:
       - "80:80"
     env_file:
-      - ${NGINX_ENV_FILE:-./frontend-web/.env.production}
+      - ${NGINX_ENV_FILE:-./frontend-web/.env.localprod}
     volumes:
       - ./nginx/templates:/etc/nginx/templates:ro
       - nginx-cache:/var/cache/nginx
