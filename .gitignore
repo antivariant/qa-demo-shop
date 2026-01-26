@@ -118,6 +118,8 @@ dist
 
 # Firebase cache directory
 .firebase/
+.firebase-config/
+.firebase-emulators/
 
 # TernJS port file
 .tern-port
@@ -144,6 +146,7 @@ backend-sdet/secrets/**
 
 frontend-web/playwright-report/*
 frontend-web/test-results/*
+test-results/
 
 # Local-only CI/CD notes
 CICD.md

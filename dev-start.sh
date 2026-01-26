@@ -6,6 +6,10 @@ DEV_START_MODE="${DEV_START_MODE:-foreground}"
 DEV_START_LOG_DIR="${DEV_START_LOG_DIR:-/tmp/qa-demo-shop}"
 FIREBASE_SANDBOX_LOG="${DEV_START_LOG_DIR}/firebase-sandbox.log"
 FIREBASE_SDET_LOG="${DEV_START_LOG_DIR}/firebase-sdet.log"
+FIREBASE_CONFIG_ROOT="${FIREBASE_CONFIG_ROOT:-${ROOT_DIR}/.firebase-config}"
+FIREBASE_EMULATORS_PATH="${FIREBASE_EMULATORS_PATH:-${ROOT_DIR}/.firebase-emulators}"
+DEV_START_USE_SUDO="${DEV_START_USE_SUDO:-0}"
+FIREBASE_CMD_PREFIX=""
 
 ensure_java() {
   if command -v java >/dev/null 2>&1; then
@@ -28,6 +32,13 @@ ensure_java() {
   exit 1
 }
 
+prepare_firebase_env() {
+  mkdir -p "${FIREBASE_CONFIG_ROOT}" "${FIREBASE_EMULATORS_PATH}"
+  export XDG_CONFIG_HOME="${FIREBASE_CONFIG_ROOT}"
+  export FIREBASE_EMULATORS_PATH="${FIREBASE_EMULATORS_PATH}"
+  export FIREBASE_TOOLS_DISABLE_PROMPTS=1
+}
+
 stop_port() {
   local port="$1"
   local pids
@@ -44,12 +55,14 @@ stop_port() {
 port_open() {
   local port="$1"
   if command -v lsof >/dev/null 2>&1; then
-    lsof -ti tcp:"${port}" >/dev/null 2>&1
-    return $?
+    if lsof -ti tcp:"${port}" >/dev/null 2>&1; then
+      return 0
+    fi
   fi
   if command -v nc >/dev/null 2>&1; then
-    nc -z 127.0.0.1 "${port}" >/dev/null 2>&1
-    return $?
+    if nc -z 127.0.0.1 "${port}" >/dev/null 2>&1; then
+      return 0
+    fi
   fi
   (echo >/dev/tcp/127.0.0.1/"${port}") >/dev/null 2>&1
 }
@@ -150,7 +163,21 @@ stop_port 4100
 
 echo "Starting Firebase emulators..."
 ensure_java
-run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && firebase emulators:start"
+prepare_firebase_env
+if [[ "${DEV_START_USE_SUDO}" == "1" ]]; then
+  if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+    FIREBASE_CMD_PREFIX="sudo -n env XDG_CONFIG_HOME=\"${FIREBASE_CONFIG_ROOT}\" FIREBASE_EMULATORS_PATH=\"${FIREBASE_EMULATORS_PATH}\" FIREBASE_TOOLS_DISABLE_PROMPTS=1"
+  else
+    echo "DEV_START_USE_SUDO=1 requires sudo access. Run: sudo -v"
+    exit 1
+  fi
+fi
+
+if [[ -n "${FIREBASE_CMD_PREFIX}" ]]; then
+  run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && ${FIREBASE_CMD_PREFIX} firebase emulators:start"
+else
+  run_bg "firebase-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && firebase emulators:start"
+fi
 
 emulator_retries=40
 emulator_delay=0.5
@@ -175,7 +202,11 @@ if ! wait_for_port 9099 "${emulator_retries}" "${emulator_delay}"; then
   fi
   exit 1
 fi
-run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
+if [[ -n "${FIREBASE_CMD_PREFIX}" ]]; then
+  run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && ${FIREBASE_CMD_PREFIX} firebase emulators:start"
+else
+  run_bg "firebase-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && firebase emulators:start"
+fi
 if ! wait_for_port 8180 "${emulator_retries}" "${emulator_delay}"; then
   echo "Firestore emulator (sdet) failed to start on 8180."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then

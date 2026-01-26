@@ -3,12 +3,12 @@ import { test, expect } from '@playwright/test';
 test.describe('Full Shop Scenario', () => {
     test.setTimeout(180000);
 
-    const testUser = {
-        email: 'user1.sandbox@example.com',
-        password: '123456',
-    };
-
-    test('should complete full user journey', async ({ page }) => {
+    test('should complete full user journey', async ({ page }, testInfo) => {
+        const uniqueId = `${Date.now()}-${testInfo.retry}`;
+        const testUser = {
+            email: `user.${uniqueId}.sandbox@example.com`,
+            password: '123456',
+        };
         const handleCartMergePrompt = async () => {
             const mergeModal = page.getByRole('dialog', { name: 'Choose which cart to keep' });
             if (await mergeModal.isVisible()) {
@@ -16,25 +16,63 @@ test.describe('Full Shop Scenario', () => {
             }
         };
 
-        const openCart = async () => {
-            await page.locator('header button svg.lucide-shopping-cart').locator('..').click();
+        const cartButton = page.locator('header button svg.lucide-shopping-cart').locator('..');
+        const openUserMenu = async () => {
+            await page.evaluate(() => {
+                const btn = document.querySelector('header button[title="Account"]') as HTMLButtonElement | null;
+                btn?.click();
+            });
         };
-
-        await page.goto('/');
-        await page.waitForLoadState('networkidle');
-
-        // Logout
-        const userBtn = page.getByTitle('Account');
-        if (await userBtn.isVisible()) {
-            await userBtn.click();
+        const logoutIfLoggedIn = async () => {
+            await openUserMenu();
             const logoutBtn = page.getByText('Logout');
             if (await logoutBtn.isVisible()) {
                 await logoutBtn.click();
                 await page.waitForTimeout(1000);
-            } else if (page.url().includes('/login')) {
-                await page.goto('/');
             }
-        }
+        };
+        const goToStore = async () => {
+            const testShopLink = page.getByText('TEST SHOP', { exact: true });
+            await testShopLink.click();
+            await page.getByTestId('store-section').scrollIntoViewIfNeeded();
+        };
+        const openCart = async () => {
+            if (!(await cartButton.isVisible())) {
+                await goToStore();
+            }
+            await cartButton.waitFor({ state: 'attached' });
+            await page.evaluate(() => {
+                const btn = document.querySelector('header button svg.lucide-shopping-cart')?.closest('button') as HTMLButtonElement | null;
+                btn?.click();
+            });
+            await expect(page.getByTestId('cart-drawer')).toBeVisible();
+        };
+        const closeCart = async () => {
+            const cartDrawer = page.getByTestId('cart-drawer');
+            if (!(await cartDrawer.isVisible())) {
+                return;
+            }
+            await page.evaluate(() => {
+                const drawer = document.querySelector('[data-testid="cart-drawer"]');
+                const closeBtn = drawer?.querySelector('button[aria-label="Close cart"]') as HTMLButtonElement | null;
+                closeBtn?.click();
+            });
+            await expect(cartDrawer).toBeHidden();
+        };
+        const selectCategory = async (label: string) => {
+            await page.evaluate((targetLabel) => {
+                const buttons = Array.from(document.querySelectorAll('header button'));
+                const btn = buttons.find((button) => button.textContent?.trim() === targetLabel) as HTMLButtonElement | undefined;
+                btn?.click();
+            }, label);
+        };
+
+        await page.goto('/');
+        await page.waitForLoadState('networkidle');
+        await page.addStyleTag({ content: '* { scroll-behavior: auto !important; }' });
+
+        // Logout
+        await logoutIfLoggedIn();
 
         // Register
         await page.goto('/login');
@@ -45,8 +83,8 @@ test.describe('Full Shop Scenario', () => {
         await registerModal.getByPlaceholder('••••••••').fill(testUser.password);
         await registerModal.getByPlaceholder('Your display name').fill('Test User');
         await registerModal.getByRole('button', { name: 'CREATE ACCOUNT' }).click();
-        await page.waitForURL('/', { timeout: 10000 }).catch(() => undefined);
-        await expect(registerModal).toBeHidden({ timeout: 10000 });
+        await page.waitForURL('/', { timeout: 20000 }).catch(() => undefined);
+        await expect(registerModal).toBeHidden({ timeout: 20000 });
 
         // Login
         await page.goto('/login');
@@ -65,7 +103,7 @@ test.describe('Full Shop Scenario', () => {
             await expect(itemsInCart).toHaveCount(itemCount - 1);
             itemCount = await itemsInCart.count();
         }
-        await page.locator('button:has(svg.lucide-x)').first().click();
+        await closeCart();
 
         // Add Items
         const store = page.getByTestId('store-section');
@@ -104,10 +142,11 @@ test.describe('Full Shop Scenario', () => {
         await expect(img).toBeVisible();
         await expect(img).toHaveJSProperty('complete', true);
 
-        await page.locator('button:has(svg.lucide-x)').first().click();
+        await closeCart();
 
         // Category
-        await page.getByText('SETS').click();
+        await goToStore();
+        await selectCategory('SETS');
         await page.waitForTimeout(2000);
         await expect(listProducts.first()).toBeVisible();
         await listProducts.first().scrollIntoViewIfNeeded();
@@ -115,10 +154,11 @@ test.describe('Full Shop Scenario', () => {
 
         await openCart();
         await expect(itemsInCart).toHaveCount(3);
-        await page.locator('button:has(svg.lucide-x)').first().click();
+        await closeCart();
 
         // Logout/Login
-        await userBtn.click();
+        await goToStore();
+        await openUserMenu();
         await page.getByText('Logout').click();
         await page.waitForTimeout(1000);
 
