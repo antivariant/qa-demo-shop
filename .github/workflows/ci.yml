@@ -56,6 +56,12 @@ jobs:
         working-directory: frontend-web
         run: npx playwright install --with-deps chromium
 
+      - name: Start dev stack
+        env:
+          DEV_START_MODE: ci
+          DEV_START_LOG_DIR: /tmp/qa-demo-shop
+        run: ./dev-start.sh
+
       - name: Run e2e (full-scenario)
         working-directory: frontend-web
         env:
