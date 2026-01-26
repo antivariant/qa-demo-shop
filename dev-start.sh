@@ -205,9 +205,9 @@ fi
 
 echo "Starting frontend..."
 if [[ "${DEV_START_MODE}" == "ci" ]]; then
-  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev"
+  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030"
 else
-  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && npm run dev -- -H 127.0.0.1"
+  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030 -H 127.0.0.1"
 fi
 
 if ! wait_for_port 3030 40 0.5; then
