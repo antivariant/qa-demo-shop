@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Testing (Playwright)
+
+Playwright runs against the QA demo stack on `http://localhost:3030`. Start the stack once, then run tests; each run only reseeds emulator data.
+
+```bash
+./dev-start.sh
+cd frontend-web
+npx playwright test
+# or a single test
+npx playwright test tests/full-scenario.spec.ts
+```
+
+Notes:
+- Emulator data reset is handled by `./dev-seed.sh` in Playwright global setup.
+- Stop the stack manually when done: `./dev-stop.sh`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

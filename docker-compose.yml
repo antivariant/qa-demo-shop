@@ -1,28 +1,28 @@
 services:
   backend-sandbox:
-    image: antivariant/backend-sandbox:dev
+    image: antivariant/backend-sandbox:${BACKEND_SANDBOX_IMAGE_TAG:-dev}
     ports:
       - "3000:3000"
     env_file:
-      - ./backend-sandbox/.env.localprod
+      - ${BACKEND_SANDBOX_ENV_FILE:-./backend-sandbox/.env.localprod}
     networks:
       - app-net
 
   backend-sdet:
-    image: antivariant/backend-sdet:dev
+    image: antivariant/backend-sdet:${BACKEND_SDET_IMAGE_TAG:-dev}
     ports:
       - "3100:3100"
     env_file:
-      - ./backend-sdet/.env.localprod
+      - ${BACKEND_SDET_ENV_FILE:-./backend-sdet/.env.localprod}
     networks:
       - app-net
 
   frontend-web:
-    image: antivariant/frontend-web:dev
+    image: antivariant/frontend-web:${FRONTEND_WEB_IMAGE_TAG:-dev}
     ports:
       - "3030:3030"
     env_file:
-      - ./frontend-web/.env.localprod
+      - ${FRONTEND_WEB_ENV_FILE:-./frontend-web/.env.localprod}
     environment:
       - NEXT_PUBLIC_API_TARGET=docker
     networks:
@@ -33,7 +33,7 @@ services:
     ports:
       - "80:80"
     env_file:
-      - ./frontend-web/.env.localprod
+      - ${NGINX_ENV_FILE:-./frontend-web/.env.localprod}
     volumes:
       - ./nginx/templates:/etc/nginx/templates:ro
       - nginx-cache:/var/cache/nginx

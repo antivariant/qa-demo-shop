@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "sh -c 'set -a; . .env.dev; set +a; next dev -p 3030'",
+    "dev": "sh -c 'set -a; [ -f .env.dev ] && . .env.dev; set +a; next dev -p 3030'",
     "build": "next build",
     "start": "next start -p 3030",
     "lint": "eslint"
