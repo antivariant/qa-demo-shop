@@ -127,6 +127,54 @@ Each machine keeps its own `.env.prod` / `.env.production` values.
 
 ---
 
+## SSL (local, docker, prod)
+
+### Local dev (npm run dev)
+
+1) Generate a self-signed cert:
+
+```bash
+./nginx/scripts/generate-local-cert.sh
+```
+
+2) Enable SSL in the backend `.env.dev` files:
+
+```
+SSL_ENABLED=true
+SSL_CERT_PATH=../nginx/certs/fullchain.pem
+SSL_KEY_PATH=../nginx/certs/privkey.pem
+```
+
+### Local docker (qacedu.localhost)
+
+- Ensure `nginx/certs/fullchain.pem` + `nginx/certs/privkey.pem` exist (use the script above).
+- Provide a local nginx env file (example keys):
+
+```
+QACEDU_API_HOST=api.qacedu.localhost
+QACEDU_INTERNAL_API_HOST=api-internal.qacedu.localhost
+QACEDU_WEB_HOST=qacedu.localhost
+QACEDU_TLS_CERT=/etc/nginx/certs/fullchain.pem
+QACEDU_TLS_KEY=/etc/nginx/certs/privkey.pem
+```
+
+### Prod (qacedu.com)
+
+- Mount Let’s Encrypt certs into the nginx container and point:
+
+```
+QACEDU_TLS_CERT=/etc/nginx/certs/fullchain.pem
+QACEDU_TLS_KEY=/etc/nginx/certs/privkey.pem
+```
+
+- Example compose override:
+
+```
+NGINX_CERTS_DIR=/etc/letsencrypt/live/qacedu.com
+```
+
+---
+
 ## Project Philosophy
 
 This backend is not built to showcase frameworks or libraries.

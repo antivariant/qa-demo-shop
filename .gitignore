@@ -145,6 +145,8 @@ vite.config.ts.timestamp-*
 backend/secrets/**
 backend-sandbox/secrets/**
 backend-sdet/secrets/**
+nginx/certs/*
+!nginx/certs/.gitkeep
 
 frontend-web/playwright-report/*
 frontend-web/test-results/*
