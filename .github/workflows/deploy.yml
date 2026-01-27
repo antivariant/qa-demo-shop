@@ -124,7 +124,8 @@ jobs:
             docker compose pull --quiet
             echo "---- docker image ls (tag filter) ----"
             docker image ls | grep "${IMAGE_TAG}" || true
-            docker compose up -d --remove-orphans
+            docker compose up -d --remove-orphans --force-recreate
+            docker image prune -f
             echo "---- docker compose ps ----"
             docker compose ps
             echo "---- docker ps (containers) ----"
