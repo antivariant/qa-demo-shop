@@ -4,6 +4,9 @@ test.describe('Full Shop Scenario', () => {
     test.setTimeout(180000);
 
     test('should complete full user journey', async ({ page }, testInfo) => {
+        const logStep = (message: string) => {
+            console.log(`[e2e] ${message}`);
+        };
         const uniqueId = `${Date.now()}-${testInfo.retry}`;
         const testUser = {
             email: `user.${uniqueId}.sandbox@example.com`,
@@ -67,14 +70,15 @@ test.describe('Full Shop Scenario', () => {
             }, label);
         };
 
+        logStep('Open home page');
         await page.goto('/');
         await page.waitForLoadState('networkidle');
         await page.addStyleTag({ content: '* { scroll-behavior: auto !important; }' });
 
-        // Logout
+        logStep('Ensure logged out');
         await logoutIfLoggedIn();
 
-        // Register
+        logStep('Register new user');
         await page.goto('/login');
         await page.getByText('Sign up').click();
 
@@ -86,7 +90,7 @@ test.describe('Full Shop Scenario', () => {
         await page.waitForURL('/', { timeout: 20000 }).catch(() => undefined);
         await expect(registerModal).toBeHidden({ timeout: 20000 });
 
-        // Login
+        logStep('Login');
         await page.goto('/login');
         await page.fill('input[type="email"]', testUser.email);
         await page.fill('input[type="password"]', testUser.password);
@@ -94,7 +98,7 @@ test.describe('Full Shop Scenario', () => {
         await expect(page).toHaveURL('/');
         await handleCartMergePrompt();
 
-        // Clear Cart
+        logStep('Clear cart');
         await openCart();
         const itemsInCart = page.getByTestId('cart-item');
         let itemCount = await itemsInCart.count();
@@ -105,7 +109,7 @@ test.describe('Full Shop Scenario', () => {
         }
         await closeCart();
 
-        // Add Items
+        logStep('Add items to cart');
         const store = page.getByTestId('store-section');
         const products = store.getByTestId('product-card');
         const listProducts = page.getByTestId('product-list-scroll').getByTestId('product-card');
@@ -131,7 +135,7 @@ test.describe('Full Shop Scenario', () => {
         await setProductQty(1, 2);
         await setProductQty(2, 3);
 
-        // Verifications
+        logStep('Verify cart contents');
         await openCart();
         await expect(itemsInCart).toHaveCount(3);
 
@@ -144,7 +148,7 @@ test.describe('Full Shop Scenario', () => {
 
         await closeCart();
 
-        // Category
+        logStep('Switch category and add item');
         await goToStore();
         await selectCategory('SETS');
         await page.waitForTimeout(2000);
@@ -156,22 +160,23 @@ test.describe('Full Shop Scenario', () => {
         await expect(itemsInCart).toHaveCount(3);
         await closeCart();
 
-        // Logout/Login
+        logStep('Logout and login to trigger merge');
         await goToStore();
         await openUserMenu();
         await page.getByText('Logout').click();
         await page.waitForTimeout(1000);
 
-        // Add item as guest to trigger merge prompt on login
+        logStep('Add item as guest');
         await products.first().getByTestId('add-btn').click();
 
+        logStep('Login and merge cart');
         await page.goto('/login');
         await page.fill('input[type="email"]', testUser.email);
         await page.fill('input[type="password"]', testUser.password);
         await page.click('button:has-text("CONTINUE")');
         await handleCartMergePrompt();
 
-        // Final Checkout
+        logStep('Checkout');
         await openCart();
         await expect(itemsInCart).toHaveCount(3);
         await page.getByRole('button', { name: 'CHECKOUT' }).click();
