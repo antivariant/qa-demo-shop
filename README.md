@@ -137,3 +137,5 @@ Its purpose is to demonstrate:
 * realistic data lifecycles
 * testability by design
 * safe evolution from a healthy system to intentionally broken ones
+
+Test: *
