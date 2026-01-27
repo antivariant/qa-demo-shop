@@ -106,13 +106,17 @@ jobs:
             echo "---- docker image ls (antivariant) ----"
             docker image ls | grep antivariant || true
             echo "---- docker pull tags ----"
-            docker pull "antivariant/backend-sandbox:${IMAGE_TAG}"
-            docker pull "antivariant/backend-sdet:${IMAGE_TAG}"
-            docker pull "antivariant/frontend-web:${IMAGE_TAG}"
-            docker compose pull
+            docker pull --quiet "antivariant/backend-sandbox:${IMAGE_TAG}"
+            docker pull --quiet "antivariant/backend-sdet:${IMAGE_TAG}"
+            docker pull --quiet "antivariant/frontend-web:${IMAGE_TAG}"
+            docker compose pull --quiet
+            echo "---- docker image ls (tag filter) ----"
+            docker image ls | grep "${IMAGE_TAG}" || true
             docker compose up -d --remove-orphans
             echo "---- docker compose ps ----"
             docker compose ps
+            echo "---- docker ps (containers) ----"
+            docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
         env:
           QACEDU_APP_PATH: ${{ secrets.VPS_APP_PATH }}
           IMAGE_TAG: ${{ github.sha }}
