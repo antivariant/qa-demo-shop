@@ -122,7 +122,11 @@ read_env_value() {
     return 0
   fi
   local line
-  line="$(rg -n "^${key}=" "${file}" | tail -n 1 || true)"
+  if command -v rg >/dev/null 2>&1; then
+    line="$(rg -n "^${key}=" "${file}" | tail -n 1 || true)"
+  else
+    line="$(grep -E "^${key}=" "${file}" | tail -n 1 || true)"
+  fi
   if [[ -z "${line}" ]]; then
     return 0
   fi
@@ -319,7 +323,11 @@ fi
 echo "Starting frontend..."
 FRONTEND_CERT_PATH="${FRONTEND_CERT_PATH:-${ROOT_DIR}/nginx/certs/fullchain.pem}"
 FRONTEND_KEY_PATH="${FRONTEND_KEY_PATH:-${ROOT_DIR}/nginx/certs/privkey.pem}"
-FRONTEND_USE_HTTPS="${DEV_START_FRONTEND_HTTPS:-1}"
+if [[ "${DEV_START_MODE}" == "ci" ]]; then
+  FRONTEND_USE_HTTPS=0
+else
+  FRONTEND_USE_HTTPS="${DEV_START_FRONTEND_HTTPS:-1}"
+fi
 if [[ "${DEV_START_MODE}" == "ci" ]]; then
   run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030"
 else
