@@ -5,11 +5,11 @@ import * as fs from 'fs';
 // Load environment variables. Supports ENV_FILE=xxx.env
 const envFile = process.env.ENV_FILE || '.env';
 if (fs.existsSync(envFile)) {
-    dotenv.config({ path: envFile });
+    dotenv.config({ path: envFile, override: true });
 } else if (fs.existsSync('.env.dev')) {
-    dotenv.config({ path: '.env.dev' });
+    dotenv.config({ path: '.env.dev', override: true });
 } else {
-    dotenv.config();
+    dotenv.config({ override: true });
 }
 
 export function initFirebase() {

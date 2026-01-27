@@ -34,16 +34,34 @@ stop_port() {
         sudo -n kill ${pids} 2>/dev/null || true
       fi
     fi
+    for _ in $(seq 1 10); do
+      if ! port_open "${port}"; then
+        return 0
+      fi
+      sleep 0.3
+    done
+    if ! kill -9 ${pids} 2>/dev/null; then
+      if command -v sudo >/dev/null 2>&1; then
+        sudo -n kill -9 ${pids} 2>/dev/null || true
+      fi
+    fi
   fi
 }
 
 verify_ports_closed() {
   local ports=("$@")
   local busy=()
-  for port in "${ports[@]}"; do
-    if port_open "${port}"; then
-      busy+=("${port}")
+  for _ in $(seq 1 10); do
+    busy=()
+    for port in "${ports[@]}"; do
+      if port_open "${port}"; then
+        busy+=("${port}")
+      fi
+    done
+    if [[ "${#busy[@]}" -eq 0 ]]; then
+      return 0
     fi
+    sleep 0.3
   done
   if [[ "${#busy[@]}" -gt 0 ]]; then
     echo "Ports still in use: ${busy[*]}"

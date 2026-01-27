@@ -4,9 +4,9 @@ import * as fs from 'fs';
 // Load env file if specified, otherwise default
 const envFile = process.env.ENV_FILE || '.env';
 if (fs.existsSync(envFile)) {
-    dotenv.config({ path: envFile });
+    dotenv.config({ path: envFile, override: true });
 } else {
-    dotenv.config();
+    dotenv.config({ override: true });
 }
 
 export const imageConfig = {

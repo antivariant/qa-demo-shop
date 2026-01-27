@@ -73,7 +73,11 @@ wait_for_http() {
   local delay="${3:-0.5}"
   for _ in $(seq 1 "${retries}"); do
     if command -v curl >/dev/null 2>&1; then
-      if curl -fsS "${url}" >/dev/null 2>&1; then
+      if [[ "${url}" == https://* ]]; then
+        if curl -kfsS "${url}" >/dev/null 2>&1; then
+          return 0
+        fi
+      elif curl -fsS "${url}" >/dev/null 2>&1; then
         return 0
       fi
     elif command -v wget >/dev/null 2>&1; then
@@ -108,6 +112,67 @@ run_bg() {
     nohup bash -c "${cmd}" > "${DEV_START_LOG_DIR}/${name}.log" 2>&1 &
   else
     bash -c "${cmd}" &
+  fi
+}
+
+read_env_value() {
+  local file="$1"
+  local key="$2"
+  if [[ ! -f "${file}" ]]; then
+    return 0
+  fi
+  local line
+  if command -v rg >/dev/null 2>&1; then
+    line="$(rg -n "^${key}=" "${file}" | tail -n 1 || true)"
+  else
+    line="$(grep -E "^${key}=" "${file}" | tail -n 1 || true)"
+  fi
+  if [[ -z "${line}" ]]; then
+    return 0
+  fi
+  echo "${line#*=}"
+}
+
+ensure_backend_https_certs() {
+  local service_dir="$1"
+  local env_file="${2:-.env.dev}"
+  local env_path="${service_dir}/${env_file}"
+  local ssl_enabled
+  ssl_enabled="$(read_env_value "${env_path}" "SSL_ENABLED")"
+  if [[ "${ssl_enabled}" != "true" ]]; then
+    return 0
+  fi
+  local cert_path key_path
+  cert_path="$(read_env_value "${env_path}" "SSL_CERT_PATH")"
+  key_path="$(read_env_value "${env_path}" "SSL_KEY_PATH")"
+  if [[ -z "${cert_path}" || -z "${key_path}" ]]; then
+    echo "Backend HTTPS enabled but SSL_CERT_PATH or SSL_KEY_PATH is missing in ${env_path}"
+    exit 1
+  fi
+  if [[ "${cert_path}" != /* ]]; then
+    cert_path="${service_dir}/${cert_path}"
+  fi
+  if [[ "${key_path}" != /* ]]; then
+    key_path="${service_dir}/${key_path}"
+  fi
+  if [[ -f "${cert_path}" && -f "${key_path}" ]]; then
+    return 0
+  fi
+  if [[ "${DEV_START_BACKEND_HTTPS_AUTOGEN:-1}" != "1" ]]; then
+    echo "Backend HTTPS certs missing and autogen disabled:"
+    echo "  cert: ${cert_path}"
+    echo "  key:  ${key_path}"
+    exit 1
+  fi
+  if [[ -x "${ROOT_DIR}/nginx/scripts/generate-local-cert.sh" ]]; then
+    echo "Generating local HTTPS certs for backend..."
+    "${ROOT_DIR}/nginx/scripts/generate-local-cert.sh" || true
+  fi
+  if [[ ! -f "${cert_path}" || ! -f "${key_path}" ]]; then
+    echo "Backend HTTPS certs still missing after autogen:"
+    echo "  cert: ${cert_path}"
+    echo "  key:  ${key_path}"
+    exit 1
   fi
 }
 
@@ -241,6 +306,8 @@ echo "Ensuring sdet test user..."
 ensure_test_user "user.sdet@example.com" "123456" "localhost:9199"
 
 echo "Starting backends..."
+ensure_backend_https_certs "${ROOT_DIR}/backend-sandbox"
+ensure_backend_https_certs "${ROOT_DIR}/backend-sdet"
 run_bg "backend-sandbox" "cd \"${ROOT_DIR}/backend-sandbox\" && ENV_FILE=.env.dev npm run dev"
 run_bg "backend-sdet" "cd \"${ROOT_DIR}/backend-sdet\" && ENV_FILE=.env.dev npm run dev"
 
@@ -254,13 +321,43 @@ if ! wait_for_port 3100 40 0.5; then
 fi
 
 echo "Starting frontend..."
+FRONTEND_CERT_PATH="${FRONTEND_CERT_PATH:-${ROOT_DIR}/nginx/certs/fullchain.pem}"
+FRONTEND_KEY_PATH="${FRONTEND_KEY_PATH:-${ROOT_DIR}/nginx/certs/privkey.pem}"
+if [[ "${DEV_START_MODE}" == "ci" ]]; then
+  FRONTEND_USE_HTTPS=0
+else
+  FRONTEND_USE_HTTPS="${DEV_START_FRONTEND_HTTPS:-1}"
+fi
 if [[ "${DEV_START_MODE}" == "ci" ]]; then
   run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030"
 else
-  run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030 -H 127.0.0.1"
+  if [[ "${FRONTEND_USE_HTTPS}" == "1" && (! -f "${FRONTEND_CERT_PATH}" || ! -f "${FRONTEND_KEY_PATH}") ]]; then
+    if [[ "${DEV_START_FRONTEND_HTTPS_AUTOGEN:-1}" == "1" && -x "${ROOT_DIR}/nginx/scripts/generate-local-cert.sh" ]]; then
+      echo "Generating local HTTPS certs for frontend..."
+      "${ROOT_DIR}/nginx/scripts/generate-local-cert.sh" || true
+    fi
+  fi
+  if [[ "${FRONTEND_USE_HTTPS}" == "1" && -f "${FRONTEND_CERT_PATH}" && -f "${FRONTEND_KEY_PATH}" ]]; then
+    run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030 -H 127.0.0.1 --experimental-https --experimental-https-cert \"${FRONTEND_CERT_PATH}\" --experimental-https-key \"${FRONTEND_KEY_PATH}\""
+  else
+    if [[ "${FRONTEND_USE_HTTPS}" == "1" ]]; then
+      echo "Frontend HTTPS requested but cert files not found:"
+      echo "  cert: ${FRONTEND_CERT_PATH}"
+      echo "  key:  ${FRONTEND_KEY_PATH}"
+      echo "Run: ./nginx/scripts/generate-local-cert.sh"
+      exit 1
+    fi
+    run_bg "frontend-web" "cd \"${ROOT_DIR}/frontend-web\" && set -a && source .env.dev && set +a && ./node_modules/.bin/next dev -p 3030 -H 127.0.0.1"
+  fi
 fi
 
-if ! wait_for_http "http://localhost:3030" 60 0.5; then
+if [[ "${DEV_START_MODE}" == "ci" || "${FRONTEND_USE_HTTPS}" != "1" ]]; then
+  FRONTEND_HEALTH_URL="http://localhost:3030"
+else
+  FRONTEND_HEALTH_URL="https://localhost:3030"
+fi
+
+if ! wait_for_http "${FRONTEND_HEALTH_URL}" 60 0.5; then
   echo "frontend-web failed to start on 3030."
   if [[ "${DEV_START_MODE}" == "ci" ]]; then
     echo "---- ${DEV_START_LOG_DIR}/frontend-web.log (last 100 lines) ----"

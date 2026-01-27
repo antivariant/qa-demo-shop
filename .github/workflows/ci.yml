@@ -60,6 +60,7 @@ jobs:
         env:
           DEV_START_MODE: ci
           DEV_START_LOG_DIR: /tmp/qa-demo-shop
+          DEV_START_FRONTEND_HTTPS: 0
         run: ./dev-start.sh
 
       - name: Run e2e (full-scenario)
@@ -68,6 +69,7 @@ jobs:
           CI: true
           DEV_START_MODE: ci
           DEV_START_LOG_DIR: /tmp/qa-demo-shop
+          PLAYWRIGHT_BASE_URL: http://localhost:3030
         run: npx playwright test tests/full-scenario.spec.ts
 
       - name: Upload Playwright artifacts
