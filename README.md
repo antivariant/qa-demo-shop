@@ -119,6 +119,15 @@ Dedicated scripts are provided for the **backend-sandbox** service:
 Only **reference data** (categories, products, prices) is synchronized.
 Runtime data (carts, orders, user sessions) is intentionally excluded.
 
+## Env Files (overview)
+
+We use two sets of env files:
+
+* **`.env.dev`** (tracked) for local development and CI tests.
+* **`.env.prod` / `.env.production`** (not tracked) for Docker runs (local + server).
+
+Each machine keeps its own `.env.prod` / `.env.production` values.
+
 ---
 
 ## Project Philosophy
