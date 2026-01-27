@@ -89,10 +89,20 @@ jobs:
             BACKEND_SDET_IMAGE_TAG=${IMAGE_TAG}
             FRONTEND_WEB_IMAGE_TAG=${IMAGE_TAG}
             EOF
+            echo "---- deploy pwd ----"
+            pwd
+            echo "---- deploy ls ----"
+            ls -la
+            echo "---- deploy .env ----"
+            cat .env
             docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_TOKEN}"
             export BACKEND_SANDBOX_IMAGE_TAG="${IMAGE_TAG}"
             export BACKEND_SDET_IMAGE_TAG="${IMAGE_TAG}"
             export FRONTEND_WEB_IMAGE_TAG="${IMAGE_TAG}"
+            echo "---- docker compose config ----"
+            docker compose config
+            echo "---- docker image ls (antivariant) ----"
+            docker image ls | grep antivariant || true
             docker compose pull
             docker compose up -d --remove-orphans
         env:
