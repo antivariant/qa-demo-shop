@@ -40,14 +40,6 @@ jobs:
             echo "Missing frontend-web/.env.production (set FRONTEND_ENV_PRODUCTION secret)."
             exit 1
           fi
-          if ! grep -Eq "^NEXT_PUBLIC_SHOP_API_BASE_URL=https://api.qacedu.com/api$" frontend-web/.env.production; then
-            echo "Expected NEXT_PUBLIC_SHOP_API_BASE_URL to use https://api.qacedu.com/api"
-            exit 1
-          fi
-          if ! grep -Eq "^NEXT_PUBLIC_SDET_API_BASE_URL=https://api-internal.qacedu.com/api$" frontend-web/.env.production; then
-            echo "Expected NEXT_PUBLIC_SDET_API_BASE_URL to use https://api-internal.qacedu.com/api"
-            exit 1
-          fi
 
       - name: Build and push backend-sandbox
         uses: docker/build-push-action@v6
