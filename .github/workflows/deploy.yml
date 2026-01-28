@@ -98,9 +98,14 @@ jobs:
           envs: QACEDU_APP_PATH,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
           debug: true
           script_stop: true
+          request_pty: true
           script: |
             set -euo pipefail
             set -x
+            LOG=/tmp/qa-deploy-debug.log
+            : > "$LOG"
+            exec > >(tee -a "$LOG") 2>&1
+            trap 'echo "===== DEPLOY LOG (tail) ====="; tail -n 200 "$LOG" || true' EXIT
             echo "Deploy target: host=$(hostname) uname=$(uname -a)"
             echo "Deploy path: ${QACEDU_APP_PATH}"
             cd "${QACEDU_APP_PATH}"
@@ -125,6 +130,7 @@ jobs:
             echo "Wrote .env:"
             cat .env
             stat .env
+            sha256sum .env || true
             if ! grep -q "BACKEND_SANDBOX_IMAGE_TAG=${IMAGE_TAG}" .env; then
               echo "ERROR: .env not updated with IMAGE_TAG=${IMAGE_TAG}"
               exit 1
@@ -138,6 +144,10 @@ jobs:
             docker pull --quiet "antivariant/frontend-web:${IMAGE_TAG}"
             docker compose pull --quiet
             docker compose up -d --remove-orphans --force-recreate
+            docker compose ps || true
+            docker ps -a || true
+            docker images | grep -E "antivariant/(backend-sandbox|backend-sdet|frontend-web)" || true
+            docker compose config | head -n 120 || true
             docker image prune -f
         env:
           QACEDU_APP_PATH: ${{ secrets.VPS_APP_PATH }}
