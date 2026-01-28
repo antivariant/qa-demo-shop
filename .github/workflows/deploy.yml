@@ -118,15 +118,16 @@ jobs:
             else
               echo "Existing .env: MISSING"
             fi
-            cat > .env <<EOF
-            BACKEND_SANDBOX_ENV_FILE=./backend-sandbox/.env.prod
-            BACKEND_SDET_ENV_FILE=./backend-sdet/.env.prod
-            FRONTEND_WEB_ENV_FILE=./frontend-web/.env.production
-            NGINX_ENV_FILE=./frontend-web/.env.production
-            BACKEND_SANDBOX_IMAGE_TAG=${IMAGE_TAG}
-            BACKEND_SDET_IMAGE_TAG=${IMAGE_TAG}
-            FRONTEND_WEB_IMAGE_TAG=${IMAGE_TAG}
-            EOF
+            printf '%s\n' \
+            "NGINX_CERTS_DIR=/etc/letsencrypt/live/qacedu.com" \
+            "BACKEND_SANDBOX_ENV_FILE=./backend-sandbox/.env.prod" \
+            "BACKEND_SDET_ENV_FILE=./backend-sdet/.env.prod" \
+            "FRONTEND_WEB_ENV_FILE=./frontend-web/.env.production" \
+            "NGINX_ENV_FILE=./frontend-web/.env.production" \
+            "BACKEND_SANDBOX_IMAGE_TAG=${IMAGE_TAG}" \
+            "BACKEND_SDET_IMAGE_TAG=${IMAGE_TAG}" \
+            "FRONTEND_WEB_IMAGE_TAG=${IMAGE_TAG}" \
+            > .env
             echo "Wrote .env:"
             cat .env
             stat .env
