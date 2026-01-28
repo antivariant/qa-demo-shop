@@ -101,10 +101,18 @@ jobs:
           script: |
             set -euo pipefail
             set -x
+            echo "Deploy target: host=$(hostname) uname=$(uname -a)"
             echo "Deploy path: ${QACEDU_APP_PATH}"
             cd "${QACEDU_APP_PATH}"
             pwd
             ls -la
+            if [ -f .env ]; then
+              echo "Existing .env:"
+              cat .env
+              stat .env
+            else
+              echo "Existing .env: MISSING"
+            fi
             cat > .env <<EOF
             BACKEND_SANDBOX_ENV_FILE=./backend-sandbox/.env.prod
             BACKEND_SDET_ENV_FILE=./backend-sdet/.env.prod
@@ -116,6 +124,11 @@ jobs:
             EOF
             echo "Wrote .env:"
             cat .env
+            stat .env
+            if ! grep -q "BACKEND_SANDBOX_IMAGE_TAG=${IMAGE_TAG}" .env; then
+              echo "ERROR: .env not updated with IMAGE_TAG=${IMAGE_TAG}"
+              exit 1
+            fi
             docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_TOKEN}"
             export BACKEND_SANDBOX_IMAGE_TAG="${IMAGE_TAG}"
             export BACKEND_SDET_IMAGE_TAG="${IMAGE_TAG}"
